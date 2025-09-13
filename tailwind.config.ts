@@ -22,6 +22,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          glow: "hsl(var(--primary-glow))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -46,6 +47,14 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        // CP-specific colors
+        cp: {
+          easy: "hsl(var(--cp-easy))",
+          medium: "hsl(var(--cp-medium))",
+          hard: "hsl(var(--cp-hard))",
+          solved: "hsl(var(--cp-solved))",
+          attempted: "hsl(var(--cp-attempted))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
