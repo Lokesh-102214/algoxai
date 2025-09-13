@@ -148,119 +148,130 @@ const SortingVisualizer = () => {
     generateArray();
   };
 
-  // Get bar color based on state
+  // Get bar color based on state with enhanced styling
   const getBarColor = (index: number) => {
     if (sortedIndices.includes(index)) {
-      return "bg-green-500"; // Sorted
+      return "bg-secondary shadow-[var(--shadow-glow-secondary)]"; // Sorted - Neon Green
     }
     if (currentIndices.includes(index)) {
-      return "bg-red-500"; // Currently comparing
+      return "bg-destructive shadow-[0_0_15px_hsl(var(--destructive)/0.5)]"; // Currently comparing - Bright Red
     }
-    return "bg-primary"; // Default
+    return "bg-primary shadow-[var(--shadow-glow-primary)]"; // Default - Bright Cyan
   };
 
   return (
     <div className="space-y-6">
-      {/* Controls */}
-      <div className="flex flex-wrap gap-4 items-end">
-        <div className="space-y-2">
-          <Label>Algorithm</Label>
-          <Select value={algorithm} onValueChange={setAlgorithm} disabled={sorting}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="bubble">Bubble Sort</SelectItem>
-              <SelectItem value="selection">Selection Sort</SelectItem>
-              <SelectItem value="insertion">Insertion Sort</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <div className="space-y-2">
-          <Label>Array Size: {arraySize}</Label>
-          <Input
-            type="range"
-            min="10"
-            max="50"
-            value={arraySize}
-            onChange={(e) => setArraySize(Number(e.target.value))}
-            disabled={sorting}
-            className="w-32"
-          />
-        </div>
-        
-        <div className="space-y-2">
-          <Label>Speed: {speed}ms</Label>
-          <Input
-            type="range"
-            min="10"
-            max="500"
-            value={speed}
-            onChange={(e) => setSpeed(Number(e.target.value))}
-            className="w-32"
-          />
-        </div>
-        
-        <div className="flex space-x-2">
-          <Button 
-            onClick={startSorting}
-            disabled={sorting}
-            className="bg-gradient-to-r from-primary to-secondary"
-          >
-            <Play className="w-4 h-4 mr-2" />
-            Start Sort
-          </Button>
+        {/* Enhanced Controls with animations */}
+        <div className="flex flex-wrap gap-4 items-end animate-fade-in-up">
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Algorithm</Label>
+            <Select value={algorithm} onValueChange={setAlgorithm} disabled={sorting}>
+              <SelectTrigger className="w-40 bg-card border-border hover:border-primary/50 transition-[var(--transition-smooth)]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="bubble">Bubble Sort</SelectItem>
+                <SelectItem value="selection">Selection Sort</SelectItem>
+                <SelectItem value="insertion">Insertion Sort</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           
-          <Button 
-            onClick={resetArray}
-            variant="outline"
-            disabled={sorting}
-          >
-            <RotateCcw className="w-4 h-4 mr-2" />
-            Reset
-          </Button>
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Array Size: {arraySize}</Label>
+            <Input
+              type="range"
+              min="10"
+              max="50"
+              value={arraySize}
+              onChange={(e) => setArraySize(Number(e.target.value))}
+              disabled={sorting}
+              className="w-32 accent-primary"
+            />
+          </div>
           
-          <Button 
-            onClick={generateArray}
-            variant="outline"
-            disabled={sorting}
-          >
-            <Shuffle className="w-4 h-4 mr-2" />
-            Generate
-          </Button>
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">Speed: {speed}ms</Label>
+            <Input
+              type="range"
+              min="10"
+              max="500"
+              value={speed}
+              onChange={(e) => setSpeed(Number(e.target.value))}
+              className="w-32 accent-primary"
+            />
+          </div>
+          
+          <div className="flex space-x-2">
+            <Button 
+              onClick={startSorting}
+              disabled={sorting}
+              className="bg-[var(--gradient-primary)] text-primary-foreground px-6
+                         shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)]
+                         transition-[var(--transition-bounce)] hover:scale-105 btn-glow"
+            >
+              <Play className="w-4 h-4 mr-2" />
+              Start Sort
+            </Button>
+            
+            <Button 
+              onClick={resetArray}
+              variant="outline"
+              disabled={sorting}
+              className="border-border hover:border-primary/50 hover:bg-primary/10 
+                         transition-[var(--transition-smooth)] hover:scale-105"
+            >
+              <RotateCcw className="w-4 h-4 mr-2" />
+              Reset
+            </Button>
+            
+            <Button 
+              onClick={generateArray}
+              variant="outline"
+              disabled={sorting}
+              className="border-border hover:border-secondary/50 hover:bg-secondary/10 
+                         transition-[var(--transition-smooth)] hover:scale-105"
+            >
+              <Shuffle className="w-4 h-4 mr-2" />
+              Generate
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {/* Visualization Area */}
-      <div className="border rounded-lg p-4 bg-muted/20 min-h-96">
+      {/* Enhanced Visualization Area */}
+      <div className="glow-border rounded-2xl p-6 bg-[var(--gradient-card)] min-h-96 
+                      shadow-[var(--shadow-card)] animate-fade-in-up">
         <div className="flex items-end justify-center space-x-1 h-80">
           {array.map((value, index) => (
             <div
               key={index}
-              className={`transition-all duration-200 ${getBarColor(index)} rounded-t-sm`}
+              className={`transition-all duration-300 rounded-t-lg shadow-sm 
+                         ${getBarColor(index)} 
+                         ${sorting ? 'animate-pulse-slow' : 'hover:scale-105'}
+                         ${currentIndices.includes(index) ? 'animate-pulse-code' : ''}`}
               style={{
                 height: `${(value / Math.max(...array)) * 280}px`,
                 width: `${Math.max(800 / array.length - 2, 8)}px`,
+                animationDelay: `${index * 0.05}s`,
               }}
               title={`Value: ${value}, Index: ${index}`}
             />
           ))}
         </div>
         
-        {/* Legend */}
-        <div className="flex justify-center space-x-6 mt-4 text-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-primary rounded"></div>
-            <span>Unsorted</span>
+        {/* Enhanced Legend */}
+        <div className="flex justify-center space-x-8 mt-6 text-sm">
+          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] hover:scale-105">
+            <div className="w-4 h-4 bg-primary rounded shadow-[var(--shadow-glow-primary)]"></div>
+            <span className="font-medium">Unsorted</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-red-500 rounded"></div>
-            <span>Comparing</span>
+          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] hover:scale-105">
+            <div className="w-4 h-4 bg-destructive rounded shadow-[0_0_10px_hsl(var(--destructive)/0.4)]"></div>
+            <span className="font-medium">Comparing</span>
           </div>
-          <div className="flex items-center space-x-2">
-            <div className="w-4 h-4 bg-green-500 rounded"></div>
-            <span>Sorted</span>
+          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] hover:scale-105">
+            <div className="w-4 h-4 bg-secondary rounded shadow-[var(--shadow-glow-secondary)]"></div>
+            <span className="font-medium">Sorted</span>
           </div>
         </div>
       </div>

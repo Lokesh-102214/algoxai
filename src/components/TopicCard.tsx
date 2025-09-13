@@ -34,42 +34,65 @@ const TopicCard = ({
   };
 
   return (
-    <Link to={`/algorithm/${slug}`}>
-      <Card className="cp-card h-full cursor-pointer group">
+    <Link to={`/algorithm/${slug}`} className="group block">
+      <div className="cp-card-interactive h-full animate-fade-in-up">
         <div className="flex items-start justify-between mb-4">
-          <div className="p-3 bg-gradient-to-br from-primary/10 to-secondary/10 rounded-lg">
-            {icon}
+          <div className="p-4 bg-[var(--gradient-primary)] rounded-xl shadow-[var(--shadow-glow-primary)]
+                          transition-[var(--transition-bounce)] group-hover:scale-110 group-hover:animate-float">
+            <div className="text-primary-foreground">
+              {icon}
+            </div>
           </div>
-          <Badge className={`${getDifficultyColor(difficulty)} text-xs px-2 py-1`}>
+          <Badge className={`${getDifficultyColor(difficulty)} text-xs px-3 py-1 font-semibold
+                            transition-[var(--transition-bounce)] group-hover:scale-110`}>
             {difficulty}
           </Badge>
         </div>
         
-        <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+        <h3 className="text-xl font-bold mb-3 group-hover:gradient-text 
+                       transition-[var(--transition-smooth)] leading-tight">
           {title}
         </h3>
         
-        <p className="text-muted-foreground text-sm mb-4 line-clamp-2">
+        <p className="text-muted-foreground text-sm mb-6 line-clamp-2 leading-relaxed
+                      group-hover:text-foreground transition-[var(--transition-smooth)]">
           {description}
         </p>
         
         <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center space-x-1">
-            <Clock className="w-3 h-3" />
-            <span>{estimatedTime}</span>
+          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
+                          group-hover:text-primary group-hover:scale-105">
+            <Clock className="w-4 h-4" />
+            <span className="font-medium">{estimatedTime}</span>
           </div>
           
-          <div className="flex items-center space-x-1">
-            <Users className="w-3 h-3" />
-            <span>{problems} problems</span>
+          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
+                          group-hover:text-secondary group-hover:scale-105">
+            <Users className="w-4 h-4" />
+            <span className="font-medium">{problems}</span>
           </div>
           
-          <div className="flex items-center space-x-1">
-            <TrendingUp className="w-3 h-3" />
-            <span>{popularity}%</span>
+          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
+                          group-hover:text-accent group-hover:scale-105">
+            <TrendingUp className="w-4 h-4" />
+            <span className="font-medium">{popularity}%</span>
           </div>
         </div>
-      </Card>
+        
+        {/* Animated progress bar */}
+        <div className="mt-4 w-full bg-muted rounded-full h-1.5 overflow-hidden">
+          <div 
+            className="h-full bg-[var(--gradient-primary)] transition-all duration-1000 
+                       group-hover:animate-shimmer"
+            style={{ width: `${popularity}%` }}
+          />
+        </div>
+        
+        {/* Hover shine effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent 
+                        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 
+                        rounded-2xl pointer-events-none" />
+      </div>
     </Link>
   );
 };
