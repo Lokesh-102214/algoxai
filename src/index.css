@@ -118,7 +118,7 @@
   }
   
   .cp-card-interactive {
-    @apply cp-card cursor-pointer group overflow-hidden
+    @apply cp-card cursor-pointer overflow-hidden
            hover:shadow-[var(--shadow-glow-primary)];
   }
   
