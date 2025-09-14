@@ -57,6 +57,10 @@ const Header = () => {
         <div className="flex items-center space-x-3">
           <Button 
             size="sm" 
+            onClick={() => {
+              const aiButton = document.querySelector('[data-ai-assistant]') as HTMLElement;
+              if (aiButton) aiButton.click();
+            }}
             className="bg-[var(--gradient-hero)] text-primary-foreground 
                        shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)]
                        transition-[var(--transition-bounce)] hover:scale-110 

@@ -12,6 +12,7 @@ import CommunityPage from "./pages/CommunityPage";
 import VisualizationPage from "./pages/VisualizationPage";
 import CalendarPage from "./pages/CalendarPage";
 import NotFound from "./pages/NotFound";
+import AIAssistant from "./components/AIAssistant";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
+          <AIAssistant />
         </div>
       </BrowserRouter>
     </TooltipProvider>

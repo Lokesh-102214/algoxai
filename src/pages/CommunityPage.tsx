@@ -167,7 +167,10 @@ const CommunityPage = () => {
                     className="flex-1"
                     onKeyDown={(e) => e.key === "Enter" && handleSendMessage()}
                   />
-                  <Button onClick={handleSendMessage}>
+                  <Button 
+                    onClick={handleSendMessage}
+                    className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary-glow hover:to-secondary shadow-[var(--shadow-glow-primary)] transition-all duration-300"
+                  >
                     <Send className="w-4 h-4" />
                   </Button>
                 </div>
@@ -209,7 +212,7 @@ const CommunityPage = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleLike(message.id)}
-                          className="flex items-center space-x-1 p-0 h-auto"
+                          className="flex items-center space-x-1 p-0 h-auto text-muted-foreground hover:text-destructive transition-colors"
                         >
                           <Heart className="w-4 h-4" />
                           <span>{message.likes}</span>
@@ -218,7 +221,8 @@ const CommunityPage = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="flex items-center space-x-1 p-0 h-auto"
+                          onClick={() => toast.info('Reply feature coming soon!')}
+                          className="flex items-center space-x-1 p-0 h-auto text-muted-foreground hover:text-primary transition-colors"
                         >
                           <MessageCircle className="w-4 h-4" />
                           <span>{message.replies}</span>
@@ -227,7 +231,11 @@ const CommunityPage = () => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          className="flex items-center space-x-1 p-0 h-auto"
+                          onClick={() => {
+                            navigator.clipboard.writeText(message.content);
+                            toast.success('Message copied to clipboard!');
+                          }}
+                          className="flex items-center space-x-1 p-0 h-auto text-muted-foreground hover:text-secondary transition-colors"
                         >
                           <Share className="w-4 h-4" />
                           <span>Share</span>
@@ -288,15 +296,30 @@ const CommunityPage = () => {
           <Card className="p-4">
             <h3 className="text-lg font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-2">
-              <Button variant="outline" size="sm" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start hover:bg-muted hover:text-primary transition-colors"
+                onClick={() => toast.info('Study Groups feature coming soon!')}
+              >
                 <Code2 className="w-4 h-4 mr-2" />
                 Study Groups
               </Button>
-              <Button variant="outline" size="sm" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start hover:bg-muted hover:text-primary transition-colors"
+                onClick={() => toast.info('Contest Teams feature coming soon!')}
+              >
                 <Trophy className="w-4 h-4 mr-2" />
                 Contest Teams
               </Button>
-              <Button variant="outline" size="sm" className="w-full justify-start">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full justify-start hover:bg-muted hover:text-primary transition-colors"
+                onClick={() => toast.info('Direct Messages feature coming soon!')}
+              >
                 <MessageCircle className="w-4 h-4 mr-2" />
                 Direct Messages
               </Button>

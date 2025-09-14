@@ -210,7 +210,13 @@ const PracticePage = () => {
               </div>
               
               <div className="flex space-x-2 ml-4">
-                <Button size="sm" className="bg-gradient-to-r from-primary to-secondary">
+                <Button 
+                  size="sm" 
+                  className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary-glow hover:to-secondary shadow-[var(--shadow-glow-primary)] transition-all duration-300"
+                  onClick={() => {
+                    window.open(problem.link, '_blank');
+                  }}
+                >
                   <Play className="w-4 h-4 mr-2" />
                   Solve
                 </Button>
