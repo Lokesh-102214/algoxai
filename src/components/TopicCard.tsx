@@ -2,7 +2,6 @@ import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Users, TrendingUp } from "lucide-react";
-
 interface TopicCardProps {
   title: string;
   description: string;
@@ -13,28 +12,29 @@ interface TopicCardProps {
   estimatedTime: string;
   popularity: number;
 }
-
-const TopicCard = ({ 
-  title, 
-  description, 
-  difficulty, 
-  problems, 
-  icon, 
-  slug, 
-  estimatedTime, 
-  popularity 
+const TopicCard = ({
+  title,
+  description,
+  difficulty,
+  problems,
+  icon,
+  slug,
+  estimatedTime,
+  popularity
 }: TopicCardProps) => {
   const getDifficultyColor = (diff: string) => {
     switch (diff) {
-      case "Easy": return "cp-difficulty-easy";
-      case "Medium": return "cp-difficulty-medium";
-      case "Hard": return "cp-difficulty-hard";
-      default: return "cp-difficulty-easy";
+      case "Easy":
+        return "cp-difficulty-easy";
+      case "Medium":
+        return "cp-difficulty-medium";
+      case "Hard":
+        return "cp-difficulty-hard";
+      default:
+        return "cp-difficulty-easy";
     }
   };
-
-  return (
-    <Link to={`/algorithm/${slug}`} className="group block">
+  return <Link to={`/algorithm/${slug}`} className="group block">
       <div className="cp-card-interactive h-full animate-fade-in-up">
         <div className="flex items-start justify-between mb-4">
           <div className="p-4 bg-[var(--gradient-primary)] rounded-xl shadow-[var(--shadow-glow-primary)]
@@ -49,8 +49,7 @@ const TopicCard = ({
           </Badge>
         </div>
         
-        <h3 className="text-xl font-bold mb-3 group-hover:gradient-text 
-                       transition-[var(--transition-smooth)] leading-tight">
+        <h3 className="text-xl font-bold mb-3 group-hover:gradient-text transition-[var(--transition-smooth)] leading-tight text-gray-50">
           {title}
         </h3>
         
@@ -81,11 +80,10 @@ const TopicCard = ({
         
         {/* Animated progress bar */}
         <div className="mt-4 w-full bg-muted rounded-full h-1.5 overflow-hidden">
-          <div 
-            className="h-full bg-[var(--gradient-primary)] transition-all duration-1000 
-                       group-hover:animate-shimmer"
-            style={{ width: `${popularity}%` }}
-          />
+          <div className="h-full bg-[var(--gradient-primary)] transition-all duration-1000 
+                       group-hover:animate-shimmer" style={{
+          width: `${popularity}%`
+        }} />
         </div>
         
         {/* Hover shine effect */}
@@ -93,8 +91,6 @@ const TopicCard = ({
                         translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 
                         rounded-2xl pointer-events-none" />
       </div>
-    </Link>
-  );
+    </Link>;
 };
-
 export default TopicCard;
