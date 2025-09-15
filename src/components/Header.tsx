@@ -33,8 +33,8 @@ const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo with glow effect */}
         <Link to="/" className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 bg-[var(--gradient-primary)] rounded-xl flex items-center justify-center shadow-[var(--shadow-glow-primary)] group-hover:animate-pulse-glow transition-[var(--transition-bounce)] group-hover:scale-110 bg-slate-100">
-            <Trophy className="w-6 h-6 text-primary-foreground animate-float bg-green-300" />
+          <div className="w-10 h-10 bg-[var(--gradient-primary)] rounded-xl flex items-center justify-center shadow-[var(--shadow-glow-primary)] group-hover:animate-pulse-glow transition-[var(--transition-bounce)] group-hover:scale-110 bg-teal-950">
+            <Trophy className="w-6 h-6 text-primary-foreground animate-float bg-teal-950 rounded-sm" />
           </div>
           <span className="text-2xl font-bold gradient-text group-hover:scale-105 transition-[var(--transition-smooth)]">
             CPMaster
@@ -63,7 +63,7 @@ const Header = () => {
           <Button size="sm" onClick={() => {
           const aiButton = document.querySelector('[data-ai-assistant]') as HTMLElement;
           if (aiButton) aiButton.click();
-        }} className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-sky-400">
+        }} className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-slate-200">
             <Mic className="w-4 h-4 mr-2 animate-pulse" />
             <span className="hidden sm:inline font-medium">AI Assistant</span>
           </Button>
