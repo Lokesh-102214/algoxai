@@ -111,8 +111,8 @@ const AIAssistant = () => {
   };
   return <div className="fixed bottom-6 right-6 z-50">
       {/* Chat Toggle Button */}
-      {!isOpen && <Button onClick={() => setIsOpen(true)} data-ai-assistant className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-all duration-300 animate-bounce hover:animate-none hover:scale-110 text-zinc-950 bg-lime-500 hover:bg-lime-400">
-          <MessageCircle className="w-6 h-6 animate-pulse" />
+      {!isOpen && <Button onClick={() => setIsOpen(true)} data-ai-assistant className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-secondary shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-all duration-300 hover:scale-110 text-white">
+          <MessageCircle className="w-8 h-8 fill-current" />
         </Button>}
 
       {/* Chat Interface */}

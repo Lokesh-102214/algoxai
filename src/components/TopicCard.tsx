@@ -49,7 +49,7 @@ const TopicCard = ({
           </Badge>
         </div>
         
-        <h3 className="text-xl font-bold mb-3 group-hover:gradient-text transition-[var(--transition-smooth)] leading-tight text-gray-50">
+        <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-[var(--transition-smooth)] leading-tight">
           {title}
         </h3>
         

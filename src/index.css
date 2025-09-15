@@ -6,26 +6,26 @@
 
 @layer base {
   :root {
-    /* Dark Theme Base Colors */
-    --background: 240 10% 8%;  /* Deep dark navy */
-    --foreground: 0 0% 95%;    /* Near white */
+    /* Enhanced Dark Theme Base Colors */
+    --background: 220 27% 6%;     /* Rich dark blue-black */
+    --foreground: 0 0% 98%;       /* Pure white */
     
-    --card: 240 10% 12%;       /* Slightly lighter dark */
-    --card-foreground: 0 0% 95%;
+    --card: 220 27% 10%;          /* Deeper card background */
+    --card-foreground: 0 0% 98%;
     
-    --popover: 240 10% 12%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 220 27% 10%;
+    --popover-foreground: 0 0% 98%;
     
-    /* Vibrant Accent Colors */
-    --primary: 171 100% 50%;      /* Bright Cyan */
-    --primary-foreground: 240 10% 8%;
-    --primary-glow: 171 100% 60%;
+    /* Enhanced Vibrant Colors */
+    --primary: 200 100% 65%;      /* Brilliant Blue */
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 200 100% 75%;
     
-    --secondary: 125 100% 50%;    /* Neon Green */
-    --secondary-foreground: 240 10% 8%;
+    --secondary: 280 100% 70%;    /* Vibrant Purple */
+    --secondary-foreground: 0 0% 98%;
     
-    --accent: 51 100% 50%;        /* Electric Yellow */
-    --accent-foreground: 240 10% 8%;
+    --accent: 320 100% 65%;       /* Hot Pink */
+    --accent-foreground: 0 0% 98%;
     
     /* Muted tones for dark theme */
     --muted: 240 10% 20%;
@@ -40,26 +40,26 @@
     --input: 240 10% 15%;
     --ring: 171 100% 50%;
     
-    /* CP Specific Colors - Vibrant */
-    --cp-easy: 125 100% 50%;      /* Bright Green */
-    --cp-medium: 45 100% 60%;     /* Bright Orange */
-    --cp-hard: 0 100% 60%;        /* Bright Red */
-    --cp-solved: 125 100% 50%;
-    --cp-attempted: 45 100% 60%;
+    /* Enhanced CP Specific Colors */
+    --cp-easy: 140 100% 60%;      /* Vibrant Green */
+    --cp-medium: 35 100% 65%;     /* Golden Orange */
+    --cp-hard: 10 100% 65%;       /* Coral Red */
+    --cp-solved: 140 100% 60%;
+    --cp-attempted: 35 100% 65%;
     
-    /* Modern Gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(171 100% 50%) 0%, hsl(171 100% 70%) 100%);
-    --gradient-secondary: linear-gradient(135deg, hsl(125 100% 50%) 0%, hsl(125 100% 60%) 100%);
-    --gradient-hero: linear-gradient(135deg, hsl(171 100% 50%) 0%, hsl(125 100% 50%) 50%, hsl(51 100% 50%) 100%);
-    --gradient-card: linear-gradient(145deg, hsl(240 10% 12%) 0%, hsl(240 10% 16%) 100%);
-    --gradient-glow: radial-gradient(circle at center, hsl(171 100% 50% / 0.3) 0%, transparent 70%);
+    /* Enhanced Modern Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(200 100% 65%) 0%, hsl(200 100% 80%) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(280 100% 70%) 0%, hsl(280 100% 85%) 100%);
+    --gradient-hero: linear-gradient(135deg, hsl(200 100% 65%) 0%, hsl(280 100% 70%) 50%, hsl(320 100% 65%) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(220 27% 10%) 0%, hsl(220 27% 14%) 100%);
+    --gradient-glow: radial-gradient(circle at center, hsl(200 100% 65% / 0.3) 0%, transparent 70%);
     
-    /* Enhanced Shadows with Glow */
-    --shadow-card: 0 4px 20px hsl(240 10% 4% / 0.5), 0 0 40px hsl(171 100% 50% / 0.1);
-    --shadow-hover: 0 10px 40px hsl(240 10% 4% / 0.7), 0 0 60px hsl(171 100% 50% / 0.2);
-    --shadow-glow-primary: 0 0 30px hsl(171 100% 50% / 0.4);
-    --shadow-glow-secondary: 0 0 30px hsl(125 100% 50% / 0.4);
-    --shadow-glow-accent: 0 0 30px hsl(51 100% 50% / 0.4);
+    /* Enhanced Shadows with Vibrant Glow */
+    --shadow-card: 0 4px 20px hsl(220 27% 2% / 0.6), 0 0 40px hsl(200 100% 65% / 0.15);
+    --shadow-hover: 0 10px 40px hsl(220 27% 2% / 0.8), 0 0 60px hsl(200 100% 65% / 0.25);
+    --shadow-glow-primary: 0 0 35px hsl(200 100% 65% / 0.5);
+    --shadow-glow-secondary: 0 0 35px hsl(280 100% 70% / 0.5);
+    --shadow-glow-accent: 0 0 35px hsl(320 100% 65% / 0.5);
     
     /* Advanced Animations */
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
