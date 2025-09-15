@@ -50,7 +50,7 @@ const Header = () => {
         }) => <Link key={path} to={path} className="group">
               <Button variant={isActive(path) ? "default" : "ghost"} size="sm" className={`flex items-center space-x-2 transition-[var(--transition-bounce)] 
                           hover:scale-105 relative overflow-hidden btn-glow
-                          ${isActive(path) ? 'bg-[var(--gradient-primary)] shadow-[var(--shadow-glow-primary)] text-primary-foreground' : 'hover:bg-muted/80 hover:text-primary'}`}>
+                          ${isActive(path) ? 'bg-[var(--gradient-primary)] shadow-[var(--shadow-glow-primary)] text-primary-foreground' : 'hover:bg-muted/80 hover:text-foreground'}`}>
                 <Icon className={`w-4 h-4 transition-[var(--transition-smooth)] 
                                 ${isActive(path) ? 'animate-pulse-slow' : 'group-hover:animate-float'}`} />
                 <span className="font-medium">{label}</span>
@@ -63,7 +63,7 @@ const Header = () => {
           <Button size="sm" onClick={() => {
           const aiButton = document.querySelector('[data-ai-assistant]') as HTMLElement;
           if (aiButton) aiButton.click();
-        }} className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-slate-200">
+        }} className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-foreground">
             <Mic className="w-4 h-4 mr-2 animate-pulse" />
             <span className="hidden sm:inline font-medium">AI Assistant</span>
           </Button>

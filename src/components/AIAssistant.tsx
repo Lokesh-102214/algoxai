@@ -179,7 +179,7 @@ const AIAssistant = () => {
             <div className="flex gap-2">
               <div className="flex-1 relative">
                 <Input value={inputMessage} onChange={e => setInputMessage(e.target.value)} onKeyPress={handleKeyPress} placeholder="Ask about algorithms, debugging, or practice problems..." className="pr-12 bg-muted/50 border-primary/20 focus:border-primary focus:ring-1 focus:ring-primary" />
-                <Button variant="ghost" size="icon" onClick={handleVoiceInput} className={`absolute right-1 top-1 h-8 w-8 ${isListening ? 'text-destructive animate-pulse' : 'text-muted-foreground hover:text-primary'}`}>
+                <Button variant="ghost" size="icon" onClick={handleVoiceInput} className={`absolute right-1 top-1 h-8 w-8 ${isListening ? 'text-destructive animate-pulse' : 'text-muted-foreground hover:text-foreground'}`}>
                   <Mic className="w-4 h-4" />
                 </Button>
               </div>

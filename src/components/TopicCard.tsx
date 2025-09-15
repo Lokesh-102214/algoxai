@@ -60,19 +60,19 @@ const TopicCard = ({
         
         <div className="flex items-center justify-between text-xs text-muted-foreground">
           <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
-                          group-hover:text-primary group-hover:scale-105">
+                          group-hover:text-foreground group-hover:scale-105">
             <Clock className="w-4 h-4" />
             <span className="font-medium">{estimatedTime}</span>
           </div>
           
           <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
-                          group-hover:text-secondary group-hover:scale-105">
+                          group-hover:text-foreground group-hover:scale-105">
             <Users className="w-4 h-4" />
             <span className="font-medium">{problems}</span>
           </div>
           
           <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
-                          group-hover:text-accent group-hover:scale-105">
+                          group-hover:text-foreground group-hover:scale-105">
             <TrendingUp className="w-4 h-4" />
             <span className="font-medium">{popularity}%</span>
           </div>
