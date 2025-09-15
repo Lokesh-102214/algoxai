@@ -129,9 +129,9 @@ const AIAssistant = () => {
         <Button
           onClick={() => setIsOpen(true)}
           data-ai-assistant
-          className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-all duration-300 animate-pulse"
+          className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-secondary text-primary-foreground shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-all duration-300 animate-bounce hover:animate-none hover:scale-110"
         >
-          <MessageCircle className="w-6 h-6" />
+          <MessageCircle className="w-6 h-6 animate-pulse" />
         </Button>
       )}
 
@@ -179,7 +179,7 @@ const AIAssistant = () => {
                     className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                       message.type === 'user'
                         ? 'bg-primary text-primary-foreground ml-auto'
-                        : 'bg-muted text-muted-foreground'
+                        : 'bg-muted text-foreground'
                     }`}
                   >
                     <div className="text-sm whitespace-pre-wrap">{message.content}</div>
