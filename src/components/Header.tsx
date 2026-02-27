@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Mic, User, Calendar, Trophy, MessageCircle, Play, Home, Code2 } from "lucide-react";
+import { Bot, User, Calendar, Trophy, MessageCircle, Play, Home, Code2 } from "lucide-react";
 const Header = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
@@ -24,6 +24,10 @@ const Header = () => {
     path: "/calendar",
     label: "Contests",
     icon: Calendar
+  }, {
+    path: "/ai",
+    label: "AI Assistant",
+    icon: Bot
   }, {
     path: "/profile",
     label: "Profile",
@@ -60,13 +64,12 @@ const Header = () => {
 
         {/* AI Voice Agent & Mobile Menu with enhanced effects */}
         <div className="flex items-center space-x-3">
-          <Button size="sm" onClick={() => {
-          const aiButton = document.querySelector('[data-ai-assistant]') as HTMLElement;
-          if (aiButton) aiButton.click();
-        }} className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-foreground">
-            <Mic className="w-4 h-4 mr-2 animate-pulse" />
-            <span className="hidden sm:inline font-medium">AI Assistant</span>
-          </Button>
+          <Link to="/ai">
+            <Button size="sm" className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-foreground">
+              <Bot className="w-4 h-4 mr-2 animate-pulse" />
+              <span className="hidden sm:inline font-medium">AI Assistant</span>
+            </Button>
+          </Link>
           
           {/* Mobile menu button with glow */}
           <div className="md:hidden">
