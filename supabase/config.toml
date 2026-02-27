@@ -1,1 +1,13 @@
 project_id = "deyxdgbdvatqoucyktqg"
+
+[functions.ai-orchestrator]
+verify_jwt = false
+
+[functions.agent-concept-explainer]
+verify_jwt = false
+
+[functions.agent-code-analyzer]
+verify_jwt = false
+
+[functions.agent-debugging-assistant]
+verify_jwt = false
