@@ -14,7 +14,120 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_chat_history: {
+        Row: {
+          agent: string
+          ai_response: string
+          created_at: string
+          id: string
+          page_context: string | null
+          session_id: string
+          user_id: string
+          user_message: string
+          was_helpful: boolean | null
+        }
+        Insert: {
+          agent: string
+          ai_response: string
+          created_at?: string
+          id?: string
+          page_context?: string | null
+          session_id: string
+          user_id: string
+          user_message: string
+          was_helpful?: boolean | null
+        }
+        Update: {
+          agent?: string
+          ai_response?: string
+          created_at?: string
+          id?: string
+          page_context?: string | null
+          session_id?: string
+          user_id?: string
+          user_message?: string
+          was_helpful?: boolean | null
+        }
+        Relationships: []
+      }
+      ai_sessions: {
+        Row: {
+          agents_used: Json
+          id: string
+          messages_count: number
+          session_start: string
+          user_id: string
+        }
+        Insert: {
+          agents_used?: Json
+          id?: string
+          messages_count?: number
+          session_start?: string
+          user_id: string
+        }
+        Update: {
+          agents_used?: Json
+          id?: string
+          messages_count?: number
+          session_start?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      learning_paths: {
+        Row: {
+          created_at: string
+          id: string
+          recommended_path: Json
+          skill_scores: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          recommended_path?: Json
+          skill_scores?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          recommended_path?: Json
+          skill_scores?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_topic_progress: {
+        Row: {
+          avg_time_seconds: number
+          id: string
+          last_activity: string
+          problems_solved: number
+          quiz_score: number
+          topic_slug: string
+          user_id: string
+        }
+        Insert: {
+          avg_time_seconds?: number
+          id?: string
+          last_activity?: string
+          problems_solved?: number
+          quiz_score?: number
+          topic_slug: string
+          user_id: string
+        }
+        Update: {
+          avg_time_seconds?: number
+          id?: string
+          last_activity?: string
+          problems_solved?: number
+          quiz_score?: number
+          topic_slug?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
