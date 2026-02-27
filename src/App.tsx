@@ -11,8 +11,8 @@ import ProfilePage from "./pages/ProfilePage";
 import CommunityPage from "./pages/CommunityPage";
 import VisualizationPage from "./pages/VisualizationPage";
 import CalendarPage from "./pages/CalendarPage";
+import AIDashboardPage from "./pages/AIDashboardPage";
 import NotFound from "./pages/NotFound";
-import AIAssistant from "./components/AIAssistant";
 
 const queryClient = new QueryClient();
 
@@ -33,10 +33,10 @@ const App = () => (
               <Route path="/community" element={<CommunityPage />} />
               <Route path="/visualizations" element={<VisualizationPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
+              <Route path="/ai" element={<AIDashboardPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>
-          <AIAssistant />
         </div>
       </BrowserRouter>
     </TooltipProvider>
