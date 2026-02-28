@@ -12,6 +12,8 @@ import CommunityPage from "./pages/CommunityPage";
 import VisualizationPage from "./pages/VisualizationPage";
 import CalendarPage from "./pages/CalendarPage";
 import AIDashboardPage from "./pages/AIDashboardPage";
+import LearningHubPage from "./pages/LearningHubPage";
+import ProductivityPage from "./pages/ProductivityPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,6 +36,8 @@ const App = () => (
               <Route path="/visualizations" element={<VisualizationPage />} />
               <Route path="/calendar" element={<CalendarPage />} />
               <Route path="/ai" element={<AIDashboardPage />} />
+              <Route path="/learning-hub" element={<LearningHubPage />} />
+              <Route path="/productivity" element={<ProductivityPage />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </main>

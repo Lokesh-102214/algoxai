@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bot, User, Calendar, Trophy, MessageCircle, Play, Home, Code2 } from "lucide-react";
+import { Bot, User, Calendar, Trophy, MessageCircle, Play, Home, Code2, GraduationCap, Wrench } from "lucide-react";
 const Header = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
@@ -8,6 +8,10 @@ const Header = () => {
     path: "/",
     label: "Home",
     icon: Home
+  }, {
+    path: "/learning-hub",
+    label: "Learn",
+    icon: GraduationCap
   }, {
     path: "/practice",
     label: "Practice",
@@ -17,17 +21,17 @@ const Header = () => {
     label: "Visualize",
     icon: Play
   }, {
-    path: "/community",
-    label: "Community",
-    icon: MessageCircle
+    path: "/ai",
+    label: "AI Assistant",
+    icon: Bot
+  }, {
+    path: "/productivity",
+    label: "Productivity",
+    icon: Wrench
   }, {
     path: "/calendar",
     label: "Contests",
     icon: Calendar
-  }, {
-    path: "/ai",
-    label: "AI Assistant",
-    icon: Bot
   }, {
     path: "/profile",
     label: "Profile",

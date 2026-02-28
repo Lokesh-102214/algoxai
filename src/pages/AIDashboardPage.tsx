@@ -5,12 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Bot, Send, BookOpen, Code2, Bug, Sparkles, ThumbsUp, ThumbsDown,
-  MessageCircle, Trash2, Zap, Brain, Shield, ToggleLeft, ToggleRight
+  MessageCircle, Trash2, Zap, Brain, Shield, ToggleLeft, ToggleRight, Building2
 } from 'lucide-react';
 import { useAIChat, AgentType, ChatMessage } from '@/hooks/useAIChat';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
+import ArchitectureExplainer from '@/components/ArchitectureExplainer';
 
 const AGENTS = [
   {
@@ -94,6 +96,17 @@ const AIDashboardPage: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 py-6 h-[calc(100vh-4rem)]">
+      <Tabs defaultValue="chat" className="h-full flex flex-col">
+        <TabsList className="mb-4 self-start">
+          <TabsTrigger value="chat" className="gap-1"><MessageCircle className="w-4 h-4" />Chat</TabsTrigger>
+          <TabsTrigger value="arch" className="gap-1"><Building2 className="w-4 h-4" />🏗️ Arch</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="arch" className="flex-1 overflow-y-auto">
+          <ArchitectureExplainer />
+        </TabsContent>
+
+        <TabsContent value="chat" className="flex-1 min-h-0">
       <div className="flex gap-4 h-full">
         {/* LEFT PANEL - 30% */}
         <div className="w-[30%] flex flex-col gap-4 min-w-[280px]">
@@ -353,6 +366,8 @@ const AIDashboardPage: React.FC = () => {
           </div>
         </Card>
       </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };

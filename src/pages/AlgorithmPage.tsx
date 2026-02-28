@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import CodeEditor from "../components/CodeEditor";
+import AICodePanel from "../components/AICodePanel";
 import { ArrowLeft, BookOpen, Code2, Play, Star } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -973,6 +974,7 @@ int main() {
               <h3 className="text-xl font-semibold mb-2">{example.title}</h3>
               <p className="text-muted-foreground mb-4">{example.explanation}</p>
               <CodeEditor code={example.code} title={`Example ${index + 1}: ${example.title}`} />
+              <AICodePanel code={example.code} context={`algorithm/${topic}`} />
             </div>
           ))}
         </div>
