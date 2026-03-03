@@ -56,7 +56,7 @@ const CodeBlock = ({ code, language, onTryInEditor }: { code: string; language?:
           )}
         </div>
       </div>
-      <pre className="p-4 overflow-x-auto bg-[#0d1117]">
+      <pre className="p-4 overflow-x-auto bg-[#0d1117] font-mono">
         <code ref={codeRef} className={language ? `language-${language}` : ''}>
           {code}
         </code>
@@ -77,7 +77,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onTryInEdi
           if (match || codeStr.includes('\n')) {
             return <CodeBlock code={codeStr} language={match?.[1]} onTryInEditor={onTryInEditor} />;
           }
-          return <code className="px-1.5 py-0.5 rounded bg-muted text-primary font-mono text-sm" {...props}>{children}</code>;
+          return <code className="px-1.5 py-0.5 rounded-md bg-muted/60 border border-border/40 text-sky-300 font-mono text-[0.8em] leading-none" {...props}>{children}</code>;
         },
         table({ children }) {
           return (
@@ -95,23 +95,38 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, onTryInEdi
         td({ children }) {
           return <td className="px-4 py-2 text-muted-foreground border-b border-border/50">{children}</td>;
         },
+        h1({ children }) {
+          return <h1 className="text-xl font-semibold mt-5 mb-3 text-foreground tracking-tight" style={{ fontFamily: 'Inter, sans-serif' }}>{children}</h1>;
+        },
         h2({ children }) {
-          return <h2 className="text-lg font-bold mt-4 mb-2 text-foreground">{children}</h2>;
+          return <h2 className="text-base font-semibold mt-4 mb-2 text-foreground" style={{ fontFamily: 'Inter, sans-serif' }}>{children}</h2>;
         },
         h3({ children }) {
-          return <h3 className="text-base font-semibold mt-3 mb-1 text-foreground">{children}</h3>;
+          return <h3 className="text-sm font-semibold mt-3 mb-1.5 text-foreground" style={{ fontFamily: 'Inter, sans-serif' }}>{children}</h3>;
         },
         p({ children }) {
-          return <p className="mb-2 leading-relaxed text-muted-foreground">{children}</p>;
+          return <p className="mb-2.5 leading-relaxed text-[0.875rem] text-foreground/90" style={{ fontFamily: 'Inter, sans-serif' }}>{children}</p>;
         },
         ul({ children }) {
-          return <ul className="list-disc list-inside mb-2 space-y-1 text-muted-foreground">{children}</ul>;
+          return <ul className="list-disc list-inside mb-2.5 space-y-1 text-foreground/90 text-[0.875rem]">{children}</ul>;
         },
         ol({ children }) {
-          return <ol className="list-decimal list-inside mb-2 space-y-1 text-muted-foreground">{children}</ol>;
+          return <ol className="list-decimal list-inside mb-2.5 space-y-1 text-foreground/90 text-[0.875rem]">{children}</ol>;
+        },
+        li({ children }) {
+          return <li className="leading-relaxed">{children}</li>;
         },
         strong({ children }) {
           return <strong className="text-foreground font-semibold">{children}</strong>;
+        },
+        em({ children }) {
+          return <em className="italic text-foreground/70">{children}</em>;
+        },
+        blockquote({ children }) {
+          return <blockquote className="border-l-2 border-primary/40 pl-4 my-3 text-muted-foreground italic">{children}</blockquote>;
+        },
+        hr() {
+          return <hr className="border-border/40 my-4" />;
         },
       }}
     >

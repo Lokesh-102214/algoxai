@@ -1,0 +1,10 @@
+{
+  "name": "algoxai-agent-trouble-shooter",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "index.mjs",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.600.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.600.0"
+  }
+}

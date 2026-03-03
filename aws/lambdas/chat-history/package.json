@@ -1,0 +1,11 @@
+{
+  "name": "algoxai-chat-history",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "AlgoX.ai chat history CRUD Lambda",
+  "main": "index.mjs",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/util-dynamodb": "^3.600.0"
+  }
+}

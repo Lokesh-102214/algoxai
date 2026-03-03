@@ -1,6 +1,8 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Bot, User, Calendar, Trophy, MessageCircle, Play, Home, Code2, GraduationCap, Wrench } from "lucide-react";
+import { User, Calendar, Play, Home, Code2, GraduationCap, Wrench } from "lucide-react";
+import AlgoXLogo from "@/components/AlgoXLogo";
+
 const Header = () => {
   const location = useLocation();
   const isActive = (path: string) => location.pathname === path;
@@ -21,10 +23,6 @@ const Header = () => {
     label: "Visualize",
     icon: Play
   }, {
-    path: "/ai",
-    label: "AI Assistant",
-    icon: Bot
-  }, {
     path: "/productivity",
     label: "Productivity",
     icon: Wrench
@@ -41,11 +39,11 @@ const Header = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Logo with glow effect */}
         <Link to="/" className="flex items-center space-x-3 group">
-          <div className="w-10 h-10 bg-[var(--gradient-primary)] rounded-xl flex items-center justify-center shadow-[var(--shadow-glow-primary)] group-hover:animate-pulse-glow transition-[var(--transition-bounce)] group-hover:scale-110 bg-teal-950">
-            <Trophy className="w-6 h-6 text-primary-foreground animate-float bg-teal-950 rounded-sm" />
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center border border-teal-500/30 bg-gradient-to-br from-teal-950/80 to-indigo-950/80 group-hover:border-teal-400/60 transition-all duration-200 group-hover:scale-110 shadow-[0_0_12px_rgba(45,212,191,0.15)] group-hover:shadow-[0_0_20px_rgba(45,212,191,0.3)]">
+            <AlgoXLogo size={22} />
           </div>
-          <span className="text-2xl font-bold gradient-text group-hover:scale-105 transition-[var(--transition-smooth)]">
-            CPMaster
+          <span className="text-xl font-bold tracking-tight group-hover:scale-105 transition-[var(--transition-smooth)]">
+            <span className="text-teal-400">Algo</span><span className="text-indigo-400">X</span><span className="text-foreground/80">.ai</span>
           </span>
         </Link>
 
@@ -70,7 +68,7 @@ const Header = () => {
         <div className="flex items-center space-x-3">
           <Link to="/ai">
             <Button size="sm" className="bg-[var(--gradient-hero)] shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)] transition-[var(--transition-bounce)] hover:scale-110 relative overflow-hidden btn-glow animate-pulse-glow text-foreground">
-              <Bot className="w-4 h-4 mr-2 animate-pulse" />
+              <AlgoXLogo size={16} className="mr-2 shrink-0" />
               <span className="hidden sm:inline font-medium">AI Assistant</span>
             </Button>
           </Link>
