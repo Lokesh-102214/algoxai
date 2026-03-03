@@ -181,6 +181,10 @@
     @apply bg-[var(--gradient-hero)] bg-clip-text text-transparent;
   }
   
+  .gradient-text.animate-pulse-glow {
+    animation: none;
+  }
+  
   /* Glowing Border */
   .glow-border {
     @apply relative

@@ -1,7 +1,7 @@
 import TopicCard from "../components/TopicCard";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Zap, BarChart3, GitBranch, Layers, Search, Shuffle, Target, Timer, TrendingUp, Award, Users, Calendar } from "lucide-react";
+
 const HomePage = () => {
   const cpTopics = [{
     title: "Dynamic Programming",
@@ -93,7 +93,6 @@ const HomePage = () => {
       }} />
         
         <div className="container mx-auto text-center relative z-10">
-          <div className="mb-8 animate-scale-in">
             <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
               Master{" "}
               <span className="gradient-text animate-pulse-glow text-sky-400">
@@ -104,7 +103,6 @@ const HomePage = () => {
               Elevate your coding skills with our comprehensive platform. Practice algorithms, 
               visualize data structures, and compete with developers worldwide.
             </p>
-          </div>
           
           <div className="flex flex-wrap justify-center gap-6 mb-12 animate-fade-in-up" style={{
           animationDelay: '0.3s'
