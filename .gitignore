@@ -12,6 +12,16 @@ dist
 dist-ssr
 *.local
 
+# Environment & secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.csv
+
+# AWS SAM build artifacts
+aws/.aws-sam/
+samconfig.toml
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

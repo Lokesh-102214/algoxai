@@ -97,6 +97,26 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  /* Chat-specific root variables */
+  :root {
+    --chat-sidebar-width: 17rem;
+    --chat-canvas-width: 42%;
+    --chat-input-max: 52rem;
+    --chat-bg: hsl(220 27% 5%);
+    --chat-sidebar-bg: hsl(220 27% 8%);
+    --chat-window-bg: hsl(220 27% 6%);
+    --chat-message-user-bg: hsl(200 80% 20% / 0.5);
+    --chat-message-ai-bg: hsl(220 27% 10%);
+    --chat-border: hsl(240 10% 20%);
+    --chat-input-bg: hsl(220 27% 9%);
+    --chat-canvas-bg: hsl(220 27% 7%);
+    
+    /* Agent brand colors */
+    --agent-breaker: 200 100% 62%;
+    --agent-refactorer: 142 70% 52%;
+    --agent-shooter: 28 95% 60%;
+  }
 }
 
 @layer components {
@@ -291,3 +311,80 @@
     grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   }
 }
+
+/* ─── Chat Interface Layer ─── */
+
+/* Streaming cursor blink */
+@keyframes chat-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Message enter */
+@keyframes chat-msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Canvas slide-in from right */
+@keyframes canvas-slide-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Agent card pulse */
+@keyframes agent-pulse {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.chat-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: hsl(var(--primary));
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  border-radius: 1px;
+  animation: chat-cursor-blink 0.9s step-end infinite;
+}
+
+.chat-msg-enter {
+  animation: chat-msg-in 0.22s ease-out both;
+}
+
+.canvas-enter {
+  animation: canvas-slide-in 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.agent-thinking {
+  animation: agent-pulse 1.4s ease-in-out infinite;
+}
+
+/* Scrollbar styling for chat */
+.chat-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.chat-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.chat-scroll::-webkit-scrollbar-thumb {
+  background: hsl(240 10% 25%);
+  border-radius: 2px;
+}
+.chat-scroll::-webkit-scrollbar-thumb:hover {
+  background: hsl(240 10% 35%);
+}
+
+/* Suggestion chip hover */
+.suggestion-chip {
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+.suggestion-chip:hover {
+  transform: translateY(-1px);
+}
+
+/* Agent tab indicator */
+.agent-tab-active-breaker  { border-color: hsl(var(--agent-breaker)); color: hsl(var(--agent-breaker)); }
+.agent-tab-active-refactorer { border-color: hsl(var(--agent-refactorer)); color: hsl(var(--agent-refactorer)); }
+.agent-tab-active-shooter  { border-color: hsl(var(--agent-shooter)); color: hsl(var(--agent-shooter)); }
