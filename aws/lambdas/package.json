@@ -1,0 +1,23 @@
+{
+  "name": "algoxai-lambdas",
+  "version": "1.0.0",
+  "description": "Shared dependencies for AlgoX.ai Lambdas",
+  "scripts": {},
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.600.0",
+    "@aws-sdk/client-apigatewaymanagementapi": "^3.600.0",
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/util-dynamodb": "^3.600.0"
+  },
+  "permissions": {
+    "contents": "*"
+  },
+  "resources": {
+    "Effect": "Allow",
+    "Action": [
+      "aws-marketplace:ViewSubscriptions",
+      "aws-marketplace:Subscribe"
+    ],
+    "Resource": "*"
+  }
+}
