@@ -1,35 +1,31 @@
-AWSTemplateFormatVersion: '2010-09-09'
+﻿AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: AlgoX.ai - AI Chat Backend (Bedrock + WebSocket + DynamoDB)
 
-# ─── Global defaults ────────────────────────────────────────────────────────
 Globals:
   Function:
     Runtime: nodejs20.x
     Timeout: 60
     MemorySize: 256
-    Architectures: [arm64]      # Graviton2 — cheaper + faster for Node
+    Architectures: [arm64]
     Environment:
       Variables:
         BEDROCK_REGION: us-east-1
-        BEDROCK_MODEL_ID: anthropic.claude-3-5-sonnet-20241022-v2:0
-        BEDROCK_FALLBACK_MODEL_ID: anthropic.claude-3-haiku-20240307-v1:0
+        BEDROCK_MODEL_ID: us.amazon.nova-lite-v1:0
+        BEDROCK_FALLBACK_MODEL_ID: us.amazon.nova-micro-v1:0
         DYNAMODB_TABLE_NAME: !Ref ChatHistoryTable
         DYNAMODB_WS_TABLE: !Ref WsConnectionsTable
         COGNITO_USER_POOL_ID: eu-north-1_Oqk1eSJFQ
         COGNITO_REGION: eu-north-1
 
-# ─── Parameters ─────────────────────────────────────────────────────────────
 Parameters:
   Stage:
     Type: String
     Default: prod
     AllowedValues: [prod, dev]
 
-# ─── Resources ──────────────────────────────────────────────────────────────
 Resources:
 
-  # ── DynamoDB: Chat history ─────────────────────────────────────────────
   ChatHistoryTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -52,7 +48,6 @@ Resources:
         - Key: Project
           Value: algoxai
 
-  # ── DynamoDB: Active WebSocket connections ─────────────────────────────
   WsConnectionsTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -71,7 +66,6 @@ Resources:
         - Key: Project
           Value: algoxai
 
-  # ── Shared IAM Role for all Lambda functions ───────────────────────────
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -90,13 +84,11 @@ Resources:
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
-              # Bedrock — invoke models with streaming
               - Effect: Allow
                 Action:
                   - bedrock:InvokeModel
                   - bedrock:InvokeModelWithResponseStream
                 Resource: '*'
-              # DynamoDB — full access to our tables
               - Effect: Allow
                 Action:
                   - dynamodb:GetItem
@@ -109,13 +101,11 @@ Resources:
                   - !GetAtt ChatHistoryTable.Arn
                   - !Sub '${ChatHistoryTable.Arn}/index/*'
                   - !GetAtt WsConnectionsTable.Arn
-              # API Gateway — push messages back via WebSocket connections
               - Effect: Allow
                 Action:
                   - execute-api:ManageConnections
                 Resource: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WsApi}/*'
 
-  # ── WebSocket API Gateway ──────────────────────────────────────────────
   WsApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
@@ -130,7 +120,6 @@ Resources:
       StageName: !Ref Stage
       AutoDeploy: true
 
-  # Connect route
   WsConnectIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -146,7 +135,6 @@ Resources:
       AuthorizationType: NONE
       Target: !Sub 'integrations/${WsConnectIntegration}'
 
-  # Disconnect route
   WsDisconnectRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -155,7 +143,6 @@ Resources:
       AuthorizationType: NONE
       Target: !Sub 'integrations/${WsConnectIntegration}'
 
-  # Default (chat) route
   WsDefaultRoute:
     Type: AWS::ApiGatewayV2::Route
     Properties:
@@ -164,7 +151,6 @@ Resources:
       AuthorizationType: NONE
       Target: !Sub 'integrations/${WsConnectIntegration}'
 
-  # Permission: API GW → invoke orchestrator Lambda
   WsLambdaPermission:
     Type: AWS::Lambda::Permission
     Properties:
@@ -173,7 +159,6 @@ Resources:
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${WsApi}/*'
 
-  # ── HTTP API Gateway (REST — history, health) ──────────────────────────
   HttpApi:
     Type: AWS::ApiGatewayV2::Api
     Properties:
@@ -191,7 +176,6 @@ Resources:
       StageName: !Ref Stage
       AutoDeploy: true
 
-  # History Lambda integration
   HistoryIntegration:
     Type: AWS::ApiGatewayV2::Integration
     Properties:
@@ -215,129 +199,108 @@ Resources:
       Principal: apigateway.amazonaws.com
       SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*'
 
-  # ── Lambda: Orchestrator (WebSocket + Bedrock streaming) ───────────────
   OrchestratorFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
+        Format: cjs
         Target: es2022
         Minify: false
         Sourcemap: false
         EntryPoints:
-          - index.mjs
-        External:
-          - '@aws-sdk/client-bedrock-runtime'
-          - '@aws-sdk/client-apigatewaymanagementapi'
-          - '@aws-sdk/client-dynamodb'
+          - orchestrator/index.mjs
     Properties:
       FunctionName: algoxai-orchestrator
       Handler: index.handler
-      CodeUri: lambdas/orchestrator/
+      CodeUri: lambdas/
       Role: !GetAtt LambdaExecutionRole.Arn
-      Timeout: 120          # longer for streaming responses
+      Timeout: 120
       MemorySize: 512
       Environment:
         Variables:
           WS_ENDPOINT: !Sub 'https://${WsApi}.execute-api.${AWS::Region}.amazonaws.com/${Stage}'
           CHAT_HISTORY_TABLE: !Ref ChatHistoryTable
           WS_CONNECTIONS_TABLE: !Ref WsConnectionsTable
+          NODE_PATH: ./
 
-  # ── Lambda: Concept Breaker agent ─────────────────────────────────────
   ConceptBreakerFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
+        Format: cjs
         Target: es2022
         EntryPoints:
-          - index.mjs
-        External:
-          - '@aws-sdk/client-bedrock-runtime'
-          - '@aws-sdk/client-apigatewaymanagementapi'
+          - agent-concept-breaker/index.mjs
     Properties:
       FunctionName: algoxai-concept-breaker
       Handler: index.handler
-      CodeUri: lambdas/agent-concept-breaker/
+      CodeUri: lambdas/
       Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 90
+      Environment:
+        Variables:
+          NODE_PATH: ./
 
-  # ── Lambda: Refactorer agent ───────────────────────────────────────────
   RefactorerFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
+        Format: cjs
         Target: es2022
         EntryPoints:
-          - index.mjs
-        External:
-          - '@aws-sdk/client-bedrock-runtime'
-          - '@aws-sdk/client-apigatewaymanagementapi'
+          - agent-refactorer/index.mjs
     Properties:
       FunctionName: algoxai-refactorer
       Handler: index.handler
-      CodeUri: lambdas/agent-refactorer/
+      CodeUri: lambdas/
       Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 90
+      Environment:
+        Variables:
+          NODE_PATH: ./
 
-  # ── Lambda: Trouble Shooter agent ─────────────────────────────────────
   TroubleShooterFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
+        Format: cjs
         Target: es2022
         EntryPoints:
-          - index.mjs
-        External:
-          - '@aws-sdk/client-bedrock-runtime'
-          - '@aws-sdk/client-apigatewaymanagementapi'
+          - agent-trouble-shooter/index.mjs
     Properties:
       FunctionName: algoxai-trouble-shooter
       Handler: index.handler
-      CodeUri: lambdas/agent-trouble-shooter/
+      CodeUri: lambdas/
       Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 90
+      Environment:
+        Variables:
+          NODE_PATH: ./
 
-  # ── Lambda: Chat History CRUD ──────────────────────────────────────────
   ChatHistoryFunction:
     Type: AWS::Serverless::Function
     Metadata:
       BuildMethod: esbuild
       BuildProperties:
-        Format: esm
-        OutExtension:
-          - .js=.mjs
+        Format: cjs
         Target: es2022
         EntryPoints:
-          - index.mjs
-        External:
-          - '@aws-sdk/client-dynamodb'
-          - '@aws-sdk/util-dynamodb'
+          - chat-history/index.mjs
     Properties:
       FunctionName: algoxai-chat-history
       Handler: index.handler
-      CodeUri: lambdas/chat-history/
+      CodeUri: lambdas/
       Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 15
       Environment:
         Variables:
           CHAT_HISTORY_TABLE: !Ref ChatHistoryTable
+          NODE_PATH: ./
 
-# ─── Outputs — these go into your .env after deploy ─────────────────────────
 Outputs:
   WsApiUrl:
     Description: WebSocket URL — set as VITE_AWS_API_WS_URL

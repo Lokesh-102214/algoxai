@@ -2,11 +2,12 @@
  * AlgoX.ai — WebSocket Orchestrator Lambda
  * Handles: $connect, $disconnect, $default (chat messages)
  * Streams Claude 3.5 Sonnet tokens back via ApiGateway WebSocket
+ * Uses unified Bedrock ConverseStream API
  */
 
 import {
   BedrockRuntimeClient,
-  InvokeModelWithResponseStreamCommand,
+  ConverseStreamCommand,
 } from '@aws-sdk/client-bedrock-runtime';
 import {
   ApiGatewayManagementApiClient,
@@ -125,47 +126,40 @@ async function handleChat(event) {
   // 2. Notify client which agent is responding
   await send(mgmt, connectionId, { type: 'agent', agent: agentId, label: agent.label });
 
-  // 3. Build messages array for Bedrock (last 20 turns)
+  // 3. Build messages array for Bedrock Converse API (last 20 turns)
   const contextWindow = history.slice(-20);
-  const messages = [
-    ...contextWindow.map(m => ({ role: m.role, content: m.content })),
-    { role: 'user', content: pageContext ? `[Page context: ${pageContext}]\n\n${message}` : message },
+  const converseMessages = [
+    ...contextWindow.map(m => ({
+      role: m.role,
+      content: [{ text: m.content }],
+    })),
+    {
+      role: 'user',
+      content: [{ text: pageContext ? `[Page context: ${pageContext}]\n\n${message}` : message }],
+    },
   ];
 
-  // 4. Build Bedrock request
-  const bedrockBody = JSON.stringify({
-    anthropic_version: 'bedrock-2023-05-31',
-    max_tokens: 4096,
-    system: agent.systemPrompt,
-    messages,
-  });
-
-  // 5. Stream response
+  // 4. Stream response via ConverseStream (unified Bedrock API)
   let fullText = '';
   let inputTokens = 0;
   let outputTokens = 0;
 
   try {
-    const streamResp = await bedrock.send(new InvokeModelWithResponseStreamCommand({
+    const streamResp = await bedrock.send(new ConverseStreamCommand({
       modelId: MODEL_ID,
-      contentType: 'application/json',
-      accept: 'application/json',
-      body: bedrockBody,
+      system: [{ text: agent.systemPrompt }],
+      messages: converseMessages,
+      inferenceConfig: { maxTokens: 4096 },
     }));
 
-    for await (const event of streamResp.body) {
-      if (event.chunk?.bytes) {
-        const chunk = JSON.parse(Buffer.from(event.chunk.bytes).toString('utf-8'));
-
-        if (chunk.type === 'content_block_delta' && chunk.delta?.type === 'text_delta') {
-          const token = chunk.delta.text;
-          fullText += token;
-          await send(mgmt, connectionId, { type: 'token', content: token });
-        } else if (chunk.type === 'message_delta' && chunk.usage) {
-          outputTokens = chunk.usage.output_tokens ?? 0;
-        } else if (chunk.type === 'message_start' && chunk.message?.usage) {
-          inputTokens = chunk.message.usage.input_tokens ?? 0;
-        }
+    for await (const event of streamResp.stream) {
+      if (event.contentBlockDelta?.delta?.text) {
+        const token = event.contentBlockDelta.delta.text;
+        fullText += token;
+        await send(mgmt, connectionId, { type: 'token', content: token });
+      } else if (event.metadata?.usage) {
+        inputTokens = event.metadata.usage.inputTokens ?? 0;
+        outputTokens = event.metadata.usage.outputTokens ?? 0;
       }
     }
   } catch (err) {
@@ -179,7 +173,7 @@ async function handleChat(event) {
     return { statusCode: 500 };
   }
 
-  // 6. Persist assistant message to DynamoDB chat history
+  // 5. Persist assistant message to DynamoDB chat history
   if (sessionId) {
     try {
       const msgId = `msg_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
@@ -224,7 +218,7 @@ async function handleChat(event) {
     }
   }
 
-  // 7. Send done event with metadata
+  // 6. Send done event with metadata
   await send(mgmt, connectionId, {
     type: 'done',
     agent: agentId,

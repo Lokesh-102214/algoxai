@@ -67,33 +67,41 @@ export function useAIChat() {
     let streamContent = '';
     let streamAgent: AgentType | undefined;
 
-    await algoxChat.send({
-      message: input,
-      sessionId,
-      userId,
-      forceAgent,
-      pageContext,
-      history: history.map(m => ({ role: m.role, content: m.content })),
-      signal: ctrl.signal,
+    // Wrap in a Promise so we can resolve/reject from inside WS callbacks.
+    // This keeps isLoading=true for the full streaming duration and safely
+    // propagates errors to the outer try/catch without crashing React.
+    await new Promise<void>((resolve, reject) => {
+      algoxChat.send({
+        message: input,
+        sessionId,
+        userId,
+        forceAgent,
+        pageContext,
+        history: history.map(m => ({ role: m.role, content: m.content })),
+        signal: ctrl.signal,
 
-      onAgentDetected: (agent) => {
-        streamAgent = agent as AgentType;
-        setActiveAgent(agent as AgentType);
-      },
+        onAgentDetected: (agent) => {
+          streamAgent = agent as AgentType;
+          setActiveAgent(agent as AgentType);
+        },
 
-      onToken: (token) => {
-        streamContent += token;
-        upsertAssistant(streamContent, streamAgent);
-      },
+        onToken: (token) => {
+          streamContent += token;
+          upsertAssistant(streamContent, streamAgent);
+        },
 
-      onDone: () => {
-        abortRef.current = null;
-      },
+        onDone: () => {
+          abortRef.current = null;
+          resolve();
+        },
 
-      onError: (err) => {
-        abortRef.current = null;
-        throw new Error(err);
-      },
+        onError: (err) => {
+          abortRef.current = null;
+          // Reject the promise instead of throwing — throwing inside a WS
+          // callback escapes React's error handling and crashes the page.
+          reject(new Error(err));
+        },
+      }).catch(reject); // catch connection failures too
     });
   }, [upsertAssistant]);
 
@@ -188,7 +196,7 @@ export function useAIChat() {
       }
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Failed to get response';
-      if (msg !== 'Aborted') {
+      if (msg !== 'Aborted' && msg !== 'Request aborted') {
         console.error('AI chat error:', e);
         toast({ title: 'AI Error', description: msg, variant: 'destructive' });
       }
