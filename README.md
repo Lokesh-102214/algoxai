@@ -4,288 +4,164 @@
 
 <img src="./gemini-svg.svg" alt="AlgoXAI logo" width="260" />
 
-**The AI-Native Algorithm Learning Platform & Reusable Visualizer Library**
+### The open-source, interactive 3D algorithm lab
 
-[![CI Status](https://github.com/Lokesh-102214/algoxai/actions/workflows/ci.yml/badge.svg)](https://github.com/Lokesh-102214/algoxai/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+**Don’t just read algorithms. Explore them.**
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
+[![Three.js](https://img.shields.io/badge/Three.js-powered-000000?logo=three.js&logoColor=white)](https://threejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?logo=vite&logoColor=white)](https://vitejs.dev/)
-[![Tests](https://img.shields.io/badge/Tests-29%20Passing-brightgreen?logo=vitest&logoColor=white)](https://vitest.dev/)
 
-[Explore Web App](https://github.com/Lokesh-102214/algoxai) • [Component Library](#-using-as-a-reusable-library) • [Algorithm Engines](#-pure-algorithm-engines) • [Quick Start](#-quick-start)
+[Get started](#quick-start) · [Explore visualizers](#visualizer-catalogue) · [Contribute](#contributing) · [Architecture](#architecture)
 
 </div>
 
 ---
 
-## 📌 Overview
+## Why AlgoXAI
 
-**AlgoXAI** transforms computer science education and competitive programming preparation from static, trial-and-error problem solving into an **interactive, AI-guided learning journey**.
+Algorithms are often taught through static diagrams or animations you cannot influence. That format hides the decisions that matter: which branch was chosen, what state changed, and why the complexity changes.
 
-Traditional competitive programming platforms (LeetCode, Codeforces) present problem statements and test runners, but offer little assistance when a student is stuck on conceptual prerequisites, recurrence relations, or invariant proofs. AlgoXAI bridges this gap through two complementary layers:
+AlgoXAI is an open-source lab for turning those invisible decisions into something learners can manipulate. Each visualizer follows a simple loop:
 
-1. **The Web Platform**: An end-to-end learning environment featuring diagnostic skill assessment, ordered prerequisite roadmaps, specialized multi-agent AI tutoring, rating-aware problem recommendation, and integrated code execution.
-2. **The Component Library (`algoxai`)**: Self-contained, accessible React visualizer components and mathematical step generators that can be dropped into any educational platform, blog, or technical documentation.
+1. **Change the input or state.** Insert a value, select a path, choose an operation.
+2. **Watch the algorithm decide.** Follow comparisons, traversal order, and structural changes step by step.
+3. **Connect the scene to the idea.** See the active state, the operation explanation, and the relevant complexity together.
 
----
+The project is useful without an account, inspectable in source, and designed to be extended by educators and contributors.
 
-## 🚀 Key Features
+## Visualizer catalogue
 
-- **Interactive Algorithm Visualizers**:
-  - **Sorting Visualizer**: Real-time comparative step execution for Bubble Sort, Selection Sort, and Insertion Sort with variable playback speed and array sizes.
-  - **Graph Visualizer**: Interactive canvas supporting dynamic node creation, BFS/DFS traversal step animations, and shortest path reconstruction.
-  - **Tower of Hanoi**: Recursive puzzle solver illustrating $O(2^n)$ exponential complexity and state-space transitions.
-- **Multi-Agent AI Tutoring System**:
-  - Contextual multi-agent routing between specialized personas (Concept Explainer, Code Reviewer, Rubber-Duck Debugger).
-  - Strict pedagogical guardrails: hints and invariant questions rather than raw answer dumps.
-- **Adaptive Diagnostic Engine**:
-  - Prerequisite-aware skill evaluation that pinpoints specific weaknesses (e.g., recursion stack vs. dynamic programming tabulation).
-  - Auto-generated, customized mastery roadmaps based on diagnostic performance.
-- **Resilient & Fail-Safe Architecture**:
-  - Fully functional offline guest mode with local state persistence.
-  - Zero runtime crashes when optional cloud backends (Supabase) are unlinked.
+| Visualizer | What you can explore | Interaction |
+| --- | --- | --- |
+| **3D Binary Search Tree** | Insert, search, and in-order traversal in a spatial tree | Orbit, zoom, insert values, replay each decision |
+| **Sorting** | Bubble sort, selection sort, and insertion sort | Change size and speed; inspect each operation |
+| **Graph traversal** | BFS and DFS exploration | Create/select nodes and follow traversal paths |
+| **Tower of Hanoi** | Recursive decomposition and the minimum-move constraint | Choose disk count and animate the optimal solution |
 
----
+The 3D BST is the foundation for the next generation of scenes: data structures that benefit from spatial reasoning rather than decorative 3D effects.
 
-## 📦 Using as a Reusable Library
+## Who it is for
 
-AlgoXAI's visualizers and algorithm engines are packaged as an independent, tree-shakeable library.
+- **Learners:** Build intuition before writing or memorising code.
+- **Educators:** Open a scene in class, share a URL, and ask students to predict the next state.
+- **Content creators:** Use the visualizers or the pure engines as a starting point for explanations.
+- **Contributors:** Add an algorithm engine, a scene, tests, and an explanation that makes a difficult idea clearer.
 
-### Installation
-
-```bash
-# Using npm
-npm install algoxai
-
-# Using pnpm
-pnpm add algoxai
-
-# Using yarn
-yarn add algoxai
-```
-
-### Component Usage
-
-Drop pre-built, theme-aware visualizer components directly into your React application:
-
-```tsx
-import React from 'react';
-import { SortingVisualizer, GraphVisualizer, TowerOfHanoi } from 'algoxai';
-
-export default function AlgorithmPlayground() {
-  return (
-    <div className="space-y-8 p-6">
-      <h2>Interactive Sorting Visualizer</h2>
-      <SortingVisualizer />
-
-      <h2>Graph Traversal (BFS & DFS)</h2>
-      <GraphVisualizer />
-
-      <h2>Recursive Tower of Hanoi Solver</h2>
-      <TowerOfHanoi />
-    </div>
-  );
-}
-```
-
----
-
-## 🧠 Pure Algorithm Engines
-
-AlgoXAI separates UI rendering from algorithmic execution. You can import pure algorithm engines to power custom animations, CLI tools, or educational simulations:
-
-### 1. Sorting Step Generator
-
-```typescript
-import { bubbleSortSteps, selectionSortSteps, isSorted } from 'algoxai';
-
-const numbers = [64, 34, 25, 12, 22, 11, 90];
-const steps = bubbleSortSteps(numbers);
-
-steps.forEach((step, index) => {
-  console.log(`Step ${index} [${step.type}]: indices ${step.indices} -> [${step.snapshot}]`);
-});
-
-console.log('Final array is sorted:', isSorted(steps[steps.length - 1].snapshot)); // true
-```
-
-### 2. Graph Traversal Engine
-
-```typescript
-import { bfs, dfs } from 'algoxai';
-
-const nodes = [{ id: 0 }, { id: 1 }, { id: 2 }, { id: 3 }];
-const edges = [
-  { from: 0, to: 1 },
-  { from: 1, to: 2 },
-  { from: 0, to: 3 },
-  { from: 3, to: 2 },
-];
-
-// Calculate shortest path using BFS
-const result = bfs(nodes, edges, 0, 2);
-console.log('Shortest path:', result.path);       // [0, 1, 2]
-console.log('Distance:', result.distance);         // 2
-console.log('Visitation order:', result.visitOrder); // [0, 1, 3, 2]
-```
-
-### 3. Tower of Hanoi Solver & Validator
-
-```typescript
-import { solveHanoi, calculateMinMoves, validateHanoiSequence } from 'algoxai';
-
-const disks = 3;
-const minMoves = calculateMinMoves(disks); // 7 moves (2^3 - 1)
-const moves = solveHanoi(disks);
-
-console.log(`Solved in ${moves.length} moves.`);
-console.log('Moves strictly valid under Hanoi rules:', validateHanoiSequence(disks, moves)); // true
-```
-
----
-
-## 🛠️ Quick Start (Web Platform)
+## Quick start
 
 ### Prerequisites
 
-- **Node.js**: `v18.0.0` or higher
-- **npm**: `v9.0.0` or higher
-
-### 1. Clone the Repository
+- Node.js 18 or later
+- npm 9 or later
 
 ```bash
 git clone https://github.com/Lokesh-102214/algoxai.git
 cd algoxai
-```
-
-### 2. Install Dependencies
-
-```bash
 npm install
-```
-
-### 3. Configure Environment Variables (Optional)
-
-The application includes automatic offline demo mode fallbacks. To connect a live Supabase backend:
-
-```bash
-# Copy template
-cp .env.example .env
-```
-
-Edit `.env` with your Supabase credentials:
-
-```env
-VITE_SUPABASE_PROJECT_ID="your-project-id"
-VITE_SUPABASE_PUBLISHABLE_KEY="your-anon-publishable-key"
-VITE_SUPABASE_URL="https://your-project-id.supabase.co"
-```
-
-### 4. Start Development Server
-
-```bash
 npm run dev
 ```
 
-Visit `http://localhost:8080` in your browser.
+Open the local URL printed by Vite, then select **Visualize**. To go directly to the 3D BST, open:
 
----
+```text
+/visualizations?tool=bst3d
+```
 
-## 🧪 Testing & Quality Assurance
+Other built-in deep links are `?tool=sorting`, `?tool=graph`, and `?tool=hanoi`.
 
-AlgoXAI includes a comprehensive unit and component testing suite powered by [Vitest](https://vitest.dev/) and [React Testing Library](https://testing-library.com/).
+### Quality checks
 
 ```bash
-# Run all tests once
-npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Run TypeScript strict type-check
 npm run typecheck
-
-# Build reusable component library bundle
-npm run build:lib
-
-# Build web application bundle
+npm test
 npm run build
 ```
 
-### Test Suite Status
+## Use the algorithm engines
 
-```
-Test Files  6 passed (6)
-Tests       29 passed (29)
-Coverage    Sorting, Graph Traversal, Hanoi, Visualizers, Auth Fallbacks
-```
+The algorithm logic is kept separate from the UI so that it can be tested, reused, and visualized in different ways.
 
----
+```ts
+import {
+  buildBSTFromArray,
+  bstInsertSteps,
+  bstSearchSteps,
+  bstInOrderSteps,
+} from "./src/lib/algorithms/trees";
 
-## 🏗️ Project Architecture
-
-```
-algoxai/
-├── .github/
-│   └── workflows/
-│       ├── ci.yml              # Automated Lint, Test & Build on push/PR
-│       └── release.yml         # Tagged release and npm publishing pipeline
-├── src/
-│   ├── components/             # Reusable UI & Visualizer components
-│   │   ├── visualizers/        # Sorting, Graph, and Hanoi visualizer widgets
-│   │   ├── ui/                 # Accessible Radix + Tailwind primitives
-│   │   ├── AICodePanel.tsx     # Context-aware AI code review widget
-│   │   ├── CodeEditor.tsx      # Multi-language browser editor
-│   │   ├── ErrorBoundary.tsx   # React crash boundary
-│   │   └── Header.tsx          # Navigation header
-│   ├── contexts/               # React Auth & Global state providers
-│   ├── hooks/                  # Custom React hooks (useAuth, useAIChat)
-│   ├── lib/                    # Core library entry & pure algorithm engines
-│   │   ├── algorithms/         # Pure sorting, graph, and recursive solvers
-│   │   │   ├── __tests__/      # Algorithmic unit tests
-│   │   │   ├── graphs.ts       # BFS / DFS traversal algorithms
-│   │   │   ├── hanoi.ts        # Hanoi solver & constraint validator
-│   │   │   └── sorting.ts      # Bubble, Selection, Insertion step generators
-│   │   └── index.ts            # Library export entry point
-│   ├── pages/                  # Web application routes
-│   └── index.css               # Calibrated Developer-Dark theme tokens
-├── vite.config.ts              # Web application bundler config
-├── vite.lib.config.ts          # Reusable library bundler config
-├── vitest.config.ts            # Vitest unit test configuration
-├── package.json                # Dual package metadata (App + Library)
-└── README.md                   # Project documentation
+const tree = buildBSTFromArray([50, 30, 70, 20, 40, 60, 80]);
+const insertTrace = bstInsertSteps(tree, 35);
+const searchTrace = bstSearchSteps(insertTrace.at(-1)!.state, 60);
+const traversal = bstInOrderSteps(tree);
 ```
 
----
+Each step contains a description, an active node, and an immutable tree-state snapshot. This makes it straightforward to build alternate renderers, lesson plans, command-line demonstrations, or accessibility-first experiences.
 
-## 🚢 CI/CD Automation
+Existing engines also cover sorting, graph traversal, and Tower of Hanoi. The public exports are collected in [`src/lib/index.ts`](src/lib/index.ts).
 
-Every pull request and push to `main` executes a multi-stage GitHub Actions pipeline:
+## Design principles
 
-1. **Type Safety Verification**: Strict verification via `tsc --noEmit`.
-2. **Automated Testing**: 29 unit and component tests via `vitest run`.
-3. **Application Build**: Production bundle compilation via `vite build`.
-4. **Library Build**: ESM and UMD library artifact generation via `vite build --config vite.lib.config.ts`.
-5. **Package Integrity**: Dry-run verification of package tarball via `npm pack --dry-run`.
+This project will grow around a few non-negotiable principles:
 
----
+- **Interaction before spectacle.** 3D is used only when spatial controls help explain the algorithm.
+- **One concept per scene.** A visualizer should make a learner’s next question obvious, not overload them with controls.
+- **State is inspectable.** Important operations have a visible active state and plain-language explanation.
+- **Progressive depth.** A newcomer can press play; an advanced learner can manipulate inputs and inspect the engine.
+- **Open by default.** No account is required to explore core visualizers, and the code is available under MIT.
+- **Honest product claims.** We document what exists, test the core logic, and avoid invented usage metrics.
 
-## 🤝 Contributing
+## Architecture
 
-Contributions are welcome! Please follow these steps:
+```text
+src/
+├── components/
+│   └── visualizers/          # Interactive React scenes, including Three.js scenes
+├── lib/
+│   ├── algorithms/           # Pure state engines and their tests
+│   │   ├── trees.ts          # BST snapshots, layout, insert/search/traversal traces
+│   │   ├── sorting.ts
+│   │   ├── graphs.ts
+│   │   └── hanoi.ts
+│   └── index.ts              # Reusable public exports
+├── pages/
+│   └── VisualizationPage.tsx # Discoverable, deep-linkable visualizer catalogue
+└── App.tsx                   # Application routes
+```
 
-1. Fork the repository.
-2. Create a feature branch: `git checkout -b feat/your-feature-name`.
-3. Ensure all tests pass: `npm test && npm run typecheck`.
-4. Commit your changes following [Conventional Commits](https://www.conventionalcommits.org/):
-   ```bash
-   git commit -m "feat(visualizer): add merge sort step generator"
-   ```
-5. Push to the branch and open a Pull Request.
+The 3D layer uses React Three Fiber and Drei. The renderer consumes the same predictable state snapshots exposed by the pure algorithm engine.
 
----
+## Contributing
 
-## 📄 License
+The best contribution is not just another animation—it is a clearer way to understand a hard concept.
 
-This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.
+1. Fork the repository and create a focused branch.
+2. Start with a pure engine in `src/lib/algorithms/`.
+3. Add unit tests that prove the trace is correct.
+4. Build a visualizer that exposes the decisions in that trace.
+5. Include useful keyboard/accessibility behaviour and concise learner-facing instructions.
+6. Run `npm run typecheck`, `npm test`, and `npm run build`.
+7. Open a pull request explaining the concept, interaction model, and what learners can discover.
+
+### Visualizer contribution checklist
+
+- Does the visual add insight that code or a flat diagram does not?
+- Can a first-time visitor start exploring within a few seconds?
+- Is the active state and the next outcome understandable without reading implementation details?
+- Are controls usable with a keyboard or accompanied by a non-drag alternative where possible?
+- Is the algorithm engine testable without a browser or renderer?
+
+## Roadmap
+
+Near-term work focuses on high-leverage scenes and shared usability primitives:
+
+- More 3D structures where spatial interaction adds genuine explanatory value.
+- Shareable presets and lesson-friendly deep links.
+- A consistent playback, step, and state-inspection API across visualizers.
+- Stronger keyboard navigation, reduced-motion options, and text alternatives for scenes.
+- Contributor templates for a pure engine, scene, tests, and documentation.
+
+## License
+
+AlgoXAI is available under the [MIT License](LICENSE).
