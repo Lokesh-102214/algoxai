@@ -4,7 +4,7 @@
 
 <img src="./gemini-svg.svg" alt="AlgoXAI logo" width="260" />
 
-### The open-source, interactive 3D algorithm lab
+### Open-source, interactive 3D algorithm lab
 
 **Don’t just read algorithms. Explore them.**
 
