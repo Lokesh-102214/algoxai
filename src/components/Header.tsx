@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/sheet";
 import { useAuth } from "@/hooks/useAuth";
 import {
-  Trophy,
   Bot,
   User,
   Calendar,
@@ -50,9 +49,11 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         {/* Brand Logo */}
         <Link to="/" className="flex items-center space-x-2.5 group">
-          <div className="w-9 h-9 bg-primary/10 text-primary border border-primary/20 rounded-lg flex items-center justify-center transition-colors group-hover:bg-primary/20">
-            <Trophy className="w-5 h-5 text-primary" />
-          </div>
+          <img
+            src="/algoxai-logo.svg"
+            alt="AlgoXAI"
+            className="w-9 h-9 rounded-lg border border-primary/20 object-cover transition-opacity group-hover:opacity-85"
+          />
           <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
             AlgoXAI
           </span>
@@ -125,7 +126,7 @@ const Header: React.FC = () => {
               <SheetContent side="right" className="w-72 bg-card border-border/60">
                 <SheetHeader className="mb-6 text-left">
                   <SheetTitle className="flex items-center space-x-2 text-lg font-bold">
-                    <Trophy className="w-5 h-5 text-primary" />
+                    <img src="/algoxai-logo.svg" alt="" className="w-5 h-5 rounded object-cover" />
                     <span>AlgoXAI Navigation</span>
                   </SheetTitle>
                 </SheetHeader>

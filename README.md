@@ -2,6 +2,8 @@
 
 # AlgoXAI
 
+<img src="./gemini-svg.svg" alt="AlgoXAI logo" width="260" />
+
 **The AI-Native Algorithm Learning Platform & Reusable Visualizer Library**
 
 [![CI Status](https://github.com/Lokesh-102214/algoxai/actions/workflows/ci.yml/badge.svg)](https://github.com/Lokesh-102214/algoxai/actions/workflows/ci.yml)
