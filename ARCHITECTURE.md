@@ -24,4 +24,4 @@ visualizer renderer ← explanation and active state
 
 ## Deployment
 
-The GitHub Pages workflow builds the Vite app under `/algoxai/`. `BrowserRouter` uses Vite’s base URL, and the workflow creates a fallback `404.html` for client-side routes.
+The GitHub Pages workflow builds under `/algoxai/`; root-hosted environments such as the custom-domain Vercel deployment build under `/`. `BrowserRouter` and public asset paths use Vite’s base URL, and the workflow creates a fallback `404.html` for client-side routes.

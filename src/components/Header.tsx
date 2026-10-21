@@ -26,6 +26,7 @@ import {
 } from "lucide-react";
 
 const Header: React.FC = () => {
+  const logoSrc = `${import.meta.env.BASE_URL}algoxai-logo.svg`;
   const location = useLocation();
   const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -50,7 +51,7 @@ const Header: React.FC = () => {
         {/* Brand Logo */}
         <Link to="/" className="flex items-center space-x-2.5 group">
           <img
-            src="/algoxai-logo.svg"
+            src={logoSrc}
             alt="AlgoXAI"
             className="w-9 h-9 rounded-lg border border-primary/20 object-cover transition-opacity group-hover:opacity-85"
           />
@@ -126,7 +127,7 @@ const Header: React.FC = () => {
               <SheetContent side="right" className="w-72 bg-card border-border/60">
                 <SheetHeader className="mb-6 text-left">
                   <SheetTitle className="flex items-center space-x-2 text-lg font-bold">
-                    <img src="/algoxai-logo.svg" alt="" className="w-5 h-5 rounded object-cover" />
+                    <img src={logoSrc} alt="" className="w-5 h-5 rounded object-cover" />
                     <span>AlgoXAI Navigation</span>
                   </SheetTitle>
                 </SheetHeader>

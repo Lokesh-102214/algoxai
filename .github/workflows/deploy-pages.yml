@@ -17,6 +17,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      VITE_DEPLOY_TARGET: github-pages
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4

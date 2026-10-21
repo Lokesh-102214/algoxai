@@ -10,7 +10,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![Three.js](https://img.shields.io/badge/Three.js-powered-000000?logo=three.js&logoColor=white)](https://threejs.org/)
 
-[Live demo](https://lokesh-102214.github.io/algoxai/) · [Run locally](#run-locally) · [Contribute](CONTRIBUTING.md) · [Architecture](ARCHITECTURE.md)
+[Live demo](https://www.algoxai.tech/) · [Run locally](#run-locally) · [Contribute](CONTRIBUTING.md) · [Architecture](ARCHITECTURE.md)
 
 </div>
 
