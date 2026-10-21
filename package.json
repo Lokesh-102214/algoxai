@@ -1,12 +1,54 @@
 {
-  "name": "vite_react_shadcn_ts",
-  "private": true,
-  "version": "0.0.0",
+  "name": "algoxai",
+  "version": "1.0.0",
+  "description": "AI-native algorithm learning platform and interactive visualizer component library for competitive programming and computer science education.",
   "type": "module",
+  "license": "MIT",
+  "author": "Lokesh <https://github.com/Lokesh-102214>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lokesh-102214/algoxai.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Lokesh-102214/algoxai/issues"
+  },
+  "homepage": "https://github.com/Lokesh-102214/algoxai#readme",
+  "keywords": [
+    "algorithms",
+    "data-structures",
+    "competitive-programming",
+    "algorithm-visualizer",
+    "react-components",
+    "ai-education",
+    "sorting",
+    "graph-algorithms",
+    "tower-of-hanoi",
+    "leetcode",
+    "codeforces"
+  ],
+  "main": "./dist/lib/algoxai.umd.cjs",
+  "module": "./dist/lib/algoxai.js",
+  "types": "./dist/lib/index.d.ts",
+  "files": [
+    "dist/lib",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/lib/algoxai.js",
+      "require": "./dist/lib/algoxai.umd.cjs",
+      "types": "./dist/lib/index.d.ts"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:lib": "vite build --config vite.lib.config.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "preview": "vite preview"
   },
@@ -69,6 +111,9 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
     "@types/node": "^22.16.5",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
@@ -78,11 +123,14 @@
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^15.15.0",
+    "jsdom": "^25.0.0",
     "lovable-tagger": "^1.1.9",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
-    "vite": "^5.4.19"
+    "vite": "^5.4.19",
+    "vite-plugin-dts": "^4.3.0",
+    "vitest": "^2.1.8"
   }
 }
