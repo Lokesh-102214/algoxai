@@ -169,7 +169,7 @@ const CommunityPage = () => {
                   />
                   <Button 
                     onClick={handleSendMessage}
-                    className="bg-gradient-to-r from-primary to-secondary text-primary-foreground hover:from-primary-glow hover:to-secondary shadow-[var(--shadow-glow-primary)] transition-all duration-300"
+                    className="shadow-sm"
                   >
                     <Send className="w-4 h-4" />
                   </Button>
@@ -235,7 +235,7 @@ const CommunityPage = () => {
                             navigator.clipboard.writeText(message.content);
                             toast.success('Message copied to clipboard!');
                           }}
-                          className="flex items-center space-x-1 p-0 h-auto text-muted-foreground hover:text-secondary transition-colors"
+                          className="flex items-center space-x-1 p-0 h-auto text-muted-foreground hover:text-primary transition-colors"
                         >
                           <Share className="w-4 h-4" />
                           <span>Share</span>

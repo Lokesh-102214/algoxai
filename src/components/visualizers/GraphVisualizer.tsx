@@ -384,7 +384,7 @@ const GraphVisualizer = () => {
           <Button
             onClick={startAlgorithm}
             disabled={isRunning || startNode === null || endNode === null}
-            className="bg-gradient-to-r from-primary to-secondary"
+            className="shadow-sm"
           >
             <Play className="w-4 h-4 mr-2" />
             Start {algorithm.toUpperCase()}

@@ -215,12 +215,12 @@ const AIDashboardPage: React.FC = () => {
           {/* Chat Header */}
           <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 bg-card/80">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center shadow-[var(--shadow-glow-primary)]">
-                <Bot className="w-5 h-5 text-primary-foreground" />
+              <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/20 flex items-center justify-center text-primary">
+                <Bot className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <h2 className="font-semibold text-foreground">CP Multi-Agent Assistant</h2>
-                <p className="text-xs text-muted-foreground">Powered by Lovable AI • Auto-routing enabled</p>
+                <h2 className="font-semibold text-foreground">AlgoXAI AI Assistant</h2>
+                <p className="text-xs text-muted-foreground">Multi-agent intelligence • Auto-routing enabled</p>
               </div>
             </div>
             <Button variant="ghost" size="sm" onClick={clearMessages} className="text-muted-foreground hover:text-destructive">
@@ -233,10 +233,10 @@ const AIDashboardPage: React.FC = () => {
             <div className="space-y-4 max-w-4xl mx-auto">
               {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-20 text-center">
-                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-4">
                     <Sparkles className="w-8 h-8 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">Multi-Agent CP Assistant</h3>
+                  <h3 className="text-lg font-semibold text-foreground mb-2">AlgoXAI Multi-Agent Assistant</h3>
                   <p className="text-muted-foreground max-w-md">
                     Ask about algorithms, paste code for review, or describe a bug. The system auto-routes to the best specialist agent.
                   </p>
@@ -358,7 +358,7 @@ const AIDashboardPage: React.FC = () => {
               <Button
                 onClick={handleSend}
                 disabled={!input.trim() || isLoading}
-                className="h-auto bg-gradient-to-r from-primary to-secondary hover:from-primary-glow hover:to-secondary shadow-[var(--shadow-glow-primary)] transition-all"
+                className="h-auto bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm transition-colors"
               >
                 <Send className="w-4 h-4" />
               </Button>

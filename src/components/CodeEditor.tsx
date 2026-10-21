@@ -73,7 +73,7 @@ const CodeEditor = ({ code, language = "cpp", title, readOnly = true }: CodeEdit
           <Button
             size="sm"
             onClick={handleRun}
-            className="h-8 w-8 p-0 bg-gradient-to-r from-cp-easy to-secondary text-primary-foreground hover:shadow-[var(--shadow-glow-secondary)] transition-all duration-200"
+            className="h-8 w-8 p-0 bg-emerald-600 hover:bg-emerald-500 text-white shadow-sm transition-colors duration-200"
           >
             <Play className="w-3 h-3" />
           </Button>
@@ -83,13 +83,13 @@ const CodeEditor = ({ code, language = "cpp", title, readOnly = true }: CodeEdit
       {/* Output Section */}
       <div className="bg-muted/30 border-t border-border p-3 text-xs">
         <div className="flex items-center space-x-2 mb-2">
-          <span className="text-accent font-medium">Output:</span>
+          <span className="text-foreground font-medium">Output:</span>
         </div>
         <div className="font-mono text-muted-foreground">
           {/* Sample output */}
-          <div className="text-cp-easy">Compilation successful ✓</div>
+          <div className="text-emerald-400">Compilation successful ✓</div>
           <div>Runtime: <span className="text-primary">0.02s</span></div>
-          <div>Memory: <span className="text-secondary">1024KB</span></div>
+          <div>Memory: <span className="text-foreground">1024KB</span></div>
         </div>
       </div>
     </Card>

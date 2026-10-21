@@ -160,7 +160,7 @@ const VisualizationPage = () => {
       </Card>
 
       {/* Educational Notes */}
-      <Card className="p-6 mt-6 bg-gradient-to-br from-primary/5 to-secondary/5">
+      <Card className="p-6 mt-6 bg-card border border-border/70">
         <h3 className="text-lg font-semibold mb-3">💡 Learning Tips</h3>
         <div className="grid md:grid-cols-2 gap-4 text-sm">
           <div>

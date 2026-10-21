@@ -1,60 +1,72 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   BookOpen, Play, Bot, Puzzle, GraduationCap, ChevronRight,
   RotateCcw, CheckCircle, ArrowRight, Sparkles, TrendingUp,
-  Clock, Target, Video
+  Clock, Target, Video, HelpCircle
 } from 'lucide-react';
 import { useAIChat } from '@/hooks/useAIChat';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
-// ─── Quiz Data ─────────────────────────────────────────────────
+// ─── Quiz Data with Explanations ────────────────────────────────
 const QUIZ_QUESTIONS = [
   {
     topic: 'arrays',
-    question: 'What is the time complexity of accessing an element by index in an array?',
-    options: ['O(1)', 'O(n)', 'O(log n)', 'Not sure'],
+    question: 'What is the time complexity of accessing an element by index in a contiguous array?',
+    options: ['O(1)', 'O(n)', 'O(log n)', 'O(n²)'],
     correct: 0,
+    explanation: 'Array elements are placed contiguously in memory. Memory address calculation `base + index * size` is arithmetic, giving true O(1) random access.',
   },
   {
     topic: 'recursion',
-    question: 'What is a base case in recursion?',
+    question: 'What is the primary role of a base case in a recursive algorithm?',
     options: [
-      'The condition where the function stops calling itself',
-      'The first line of the recursive function',
-      'The recursive call itself',
-      'Not sure',
+      'The condition that terminates recursion and prevents infinite stack growth',
+      'The initial line specifying parameter types',
+      'The step that breaks input into smaller subproblems',
+      'The memory allocation for stack frames',
     ],
     correct: 0,
+    explanation: 'The base case provides a terminating condition that returns a value directly, halting further recursive calls and preventing stack overflow.',
   },
   {
     topic: 'graphs',
-    question: 'Which algorithm finds the shortest path in an unweighted graph?',
-    options: ['DFS', 'BFS', 'Dijkstra', 'Not sure'],
+    question: 'Which algorithm is guaranteed to find the shortest path in an unweighted graph?',
+    options: ['Depth-First Search (DFS)', 'Breadth-First Search (BFS)', 'Floyd-Warshall', 'Topological Sort'],
     correct: 1,
+    explanation: 'Breadth-First Search (BFS) explores all vertices at distance d before inspecting vertices at distance d+1, guaranteeing shortest paths on unweighted edges.',
   },
   {
     topic: 'dp',
-    question: 'What property must a problem have to be solvable by Dynamic Programming?',
+    question: 'Which two key properties must a problem satisfy to be solvable with Dynamic Programming?',
     options: [
       'Overlapping subproblems & optimal substructure',
-      'Greedy choice property',
-      'No cycles in the state space',
-      'Not sure',
+      'Greedy choice property & sorted inputs',
+      'Acyclic state space & linear constraints',
+      'Divide-and-conquer independence & deterministic branching',
     ],
     correct: 0,
+    explanation: 'Overlapping subproblems permit memoization/tabulation without redundant recomputation; optimal substructure means global optimal solutions derive from optimal subproblem solutions.',
   },
   {
     topic: 'binary-search',
-    question: 'Binary search requires the input to be:',
-    options: ['Sorted', 'Unique', 'Positive integers only', 'Not sure'],
+    question: 'What prerequisite property is required for Binary Search over an array?',
+    options: [
+      'Elements must be sorted (monotonic)',
+      'All elements must be distinct',
+      'Array length must be an exact power of two',
+      'Elements must be non-negative integers',
+    ],
     correct: 0,
+    explanation: 'Binary search requires monotonicity (sorted order) so that comparing the target with the midpoint definitively eliminates half the search interval.',
   },
 ];
 
@@ -67,7 +79,7 @@ const TOPICS = [
     readTime: '8 min',
     videoUrl: 'https://www.youtube.com/embed/P3YID7liBug',
     videoTitle: 'Binary Search - CS Dojo',
-    description: 'Efficiently search sorted data by halving the search space.',
+    description: 'Efficiently search sorted data by repeatedly halving the search space in logarithmic time.',
   },
   {
     slug: 'sorting-algorithms',
@@ -75,8 +87,8 @@ const TOPICS = [
     difficulty: 'Easy',
     readTime: '12 min',
     videoUrl: 'https://www.youtube.com/embed/kPRA0W1kECg',
-    videoTitle: 'Sorting Visualized - Beyond Fireship',
-    description: 'Arrange data efficiently with various comparison and non-comparison algorithms.',
+    videoTitle: 'Sorting Visualized - Fireship',
+    description: 'Arrange data efficiently with divide-and-conquer and comparison sorting techniques.',
   },
   {
     slug: 'graph-algorithms',
@@ -94,7 +106,7 @@ const TOPICS = [
     readTime: '20 min',
     videoUrl: 'https://www.youtube.com/embed/oBt53YbR9Kk',
     videoTitle: 'Dynamic Programming - freeCodeCamp',
-    description: 'Break complex problems into overlapping subproblems for optimal solutions.',
+    description: 'Break complex problems into overlapping subproblems with memoization and tabulation.',
   },
   {
     slug: 'greedy-algorithms',
@@ -103,7 +115,7 @@ const TOPICS = [
     readTime: '10 min',
     videoUrl: 'https://www.youtube.com/embed/bC7o8P_Ste4',
     videoTitle: 'Greedy Algorithms - Abdul Bari',
-    description: 'Make locally optimal choices at each step to find global optima.',
+    description: 'Make locally optimal choices at each step to reach verified globally optimal solutions.',
   },
   {
     slug: 'backtracking',
@@ -112,7 +124,7 @@ const TOPICS = [
     readTime: '18 min',
     videoUrl: 'https://www.youtube.com/embed/DKCbsiDBN6c',
     videoTitle: 'Backtracking - Back To Back SWE',
-    description: 'Explore all possibilities using recursive DFS with pruning.',
+    description: 'Systematically explore search trees using recursive DFS with constraint pruning.',
   },
 ];
 
@@ -123,16 +135,28 @@ const difficultyClass = (d: string) =>
 const AdaptiveQuiz = ({ onComplete }: { onComplete: (scores: Record<string, number>) => void }) => {
   const [current, setCurrent] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [selectedIdx, setSelectedIdx] = useState<number | null>(null);
 
-  const handleAnswer = (idx: number) => {
-    const next = [...answers, idx];
+  const handleSelectOption = (idx: number) => {
+    if (showExplanation) return;
+    setSelectedIdx(idx);
+    setShowExplanation(true);
+  };
+
+  const handleNext = () => {
+    if (selectedIdx === null) return;
+    const next = [...answers, selectedIdx];
     setAnswers(next);
+    setShowExplanation(false);
+    setSelectedIdx(null);
+
     if (current < QUIZ_QUESTIONS.length - 1) {
       setCurrent(current + 1);
     } else {
       const scores: Record<string, number> = {};
       QUIZ_QUESTIONS.forEach((q, i) => {
-        scores[q.topic] = next[i] === q.correct ? 100 : next[i] === 3 ? 0 : 30;
+        scores[q.topic] = next[i] === q.correct ? 100 : 35;
       });
       onComplete(scores);
     }
@@ -142,39 +166,77 @@ const AdaptiveQuiz = ({ onComplete }: { onComplete: (scores: Record<string, numb
   const progress = ((current) / QUIZ_QUESTIONS.length) * 100;
 
   return (
-    <div className="max-w-2xl mx-auto py-12 animate-fade-in-up">
+    <div className="max-w-2xl mx-auto py-12">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center mx-auto mb-4">
-          <GraduationCap className="w-8 h-8 text-primary" />
+        <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 text-primary flex items-center justify-center mx-auto mb-4">
+          <GraduationCap className="w-7 h-7" />
         </div>
-        <h2 className="text-2xl font-bold text-foreground mb-2">Skill Assessment</h2>
-        <p className="text-muted-foreground">Answer 5 questions so we can personalize your learning path.</p>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Algorithmic Skill Assessment</h2>
+        <p className="text-sm text-muted-foreground">
+          5 fundamental diagnostic questions to pinpoint your knowledge distribution and construct your roadmap.
+        </p>
       </div>
 
-      <Progress value={progress} className="mb-6 h-2" />
-      <p className="text-xs text-muted-foreground mb-4">Question {current + 1} of {QUIZ_QUESTIONS.length}</p>
+      <Progress value={progress} className="mb-4 h-2" />
+      <div className="flex justify-between items-center text-xs text-muted-foreground mb-4">
+        <span>Question {current + 1} of {QUIZ_QUESTIONS.length}</span>
+        <Badge variant="outline" className="text-[10px] uppercase font-mono">{q.topic}</Badge>
+      </div>
 
-      <Card className="p-6 bg-card/80 border-border/50">
-        <Badge className="mb-3 text-xs" variant="outline">{q.topic}</Badge>
-        <h3 className="text-lg font-semibold text-foreground mb-4">{q.question}</h3>
-        <div className="space-y-3">
-          {q.options.map((opt, i) => (
-            <button
-              key={i}
-              onClick={() => handleAnswer(i)}
-              className="w-full text-left p-4 rounded-xl border border-border/50 bg-muted/10 hover:bg-primary/10 hover:border-primary/40 transition-all duration-200 text-foreground"
-            >
-              {opt}
-            </button>
-          ))}
+      <Card className="p-6 border-border/60 bg-card">
+        <h3 className="text-base sm:text-lg font-semibold text-foreground mb-5">{q.question}</h3>
+
+        <div className="space-y-2.5 mb-6">
+          {q.options.map((opt, i) => {
+            let btnStyle = 'border-border/50 bg-muted/10 hover:bg-muted/20 text-foreground';
+            if (showExplanation) {
+              if (i === q.correct) {
+                btnStyle = 'border-emerald-500/60 bg-emerald-500/10 text-emerald-400 font-medium';
+              } else if (i === selectedIdx) {
+                btnStyle = 'border-red-500/60 bg-red-500/10 text-red-400';
+              } else {
+                btnStyle = 'border-border/20 opacity-50 text-muted-foreground';
+              }
+            }
+
+            return (
+              <button
+                key={i}
+                onClick={() => handleSelectOption(i)}
+                disabled={showExplanation}
+                className={`w-full text-left p-3.5 rounded-lg border text-xs sm:text-sm transition-all duration-150 ${btnStyle}`}
+              >
+                {opt}
+              </button>
+            );
+          })}
         </div>
+
+        {showExplanation && (
+          <div className="p-4 rounded-lg bg-muted/30 border border-border/50 mb-4 animate-fade-in text-xs leading-relaxed">
+            <div className="flex items-center gap-1.5 font-semibold text-foreground mb-1">
+              <HelpCircle className="w-4 h-4 text-primary" />
+              <span>Explanation</span>
+            </div>
+            <p className="text-muted-foreground">{q.explanation}</p>
+          </div>
+        )}
+
+        {showExplanation && (
+          <div className="flex justify-end">
+            <Button size="sm" onClick={handleNext} className="gap-1.5">
+              <span>{current < QUIZ_QUESTIONS.length - 1 ? 'Next Question' : 'View Personalized Roadmap'}</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
       </Card>
     </div>
   );
 };
 
 // ─── Progress Ring ────────────────────────────────────────────
-const ProgressRing = ({ value, size = 56, stroke = 4, label }: { value: number; size?: number; stroke?: number; label?: string }) => {
+const ProgressRing = ({ value, size = 52, stroke = 4, label }: { value: number; size?: number; stroke?: number; label?: string }) => {
   const r = (size - stroke) / 2;
   const circ = 2 * Math.PI * r;
   const offset = circ - (value / 100) * circ;
@@ -194,7 +256,7 @@ const ProgressRing = ({ value, size = 56, stroke = 4, label }: { value: number; 
 
 // ─── Topic Card with Tabs ─────────────────────────────────────
 const TopicContentCard = ({ topic, score }: { topic: typeof TOPICS[0]; score: number }) => {
-  const { messages, isLoading, sendMessage, clearMessages } = useAIChat();
+  const { messages, isLoading, sendMessage } = useAIChat();
   const [aiInput, setAiInput] = useState('');
   const navigate = useNavigate();
 
@@ -205,14 +267,14 @@ const TopicContentCard = ({ topic, score }: { topic: typeof TOPICS[0]; score: nu
   };
 
   return (
-    <Card className="overflow-hidden border-border/50 bg-card/80 hover:shadow-[var(--shadow-hover)] transition-all duration-300 animate-fade-in-up">
+    <Card className="overflow-hidden border-border/60 bg-card hover:border-primary/40 transition-colors">
       <div className="p-5 flex items-start justify-between">
-        <div className="flex-1">
+        <div className="flex-1 pr-4">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="font-semibold text-foreground text-lg">{topic.title}</h3>
+            <h3 className="font-semibold text-foreground text-base">{topic.title}</h3>
             <Badge className={difficultyClass(topic.difficulty)}>{topic.difficulty}</Badge>
           </div>
-          <p className="text-sm text-muted-foreground">{topic.description}</p>
+          <p className="text-xs text-muted-foreground leading-relaxed">{topic.description}</p>
           <div className="flex items-center gap-3 mt-2 text-xs text-muted-foreground">
             <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{topic.readTime}</span>
           </div>
@@ -221,17 +283,17 @@ const TopicContentCard = ({ topic, score }: { topic: typeof TOPICS[0]; score: nu
       </div>
 
       <Tabs defaultValue="read" className="px-5 pb-5">
-        <TabsList className="w-full grid grid-cols-4 h-9">
-          <TabsTrigger value="read" className="text-xs gap-1"><BookOpen className="w-3 h-3" />Read</TabsTrigger>
+        <TabsList className="w-full grid grid-cols-4 h-8">
+          <TabsTrigger value="read" className="text-xs gap-1"><BookOpen className="w-3 h-3" />Guide</TabsTrigger>
           <TabsTrigger value="video" className="text-xs gap-1"><Video className="w-3 h-3" />Video</TabsTrigger>
-          <TabsTrigger value="ai" className="text-xs gap-1"><Bot className="w-3 h-3" />AI Explain</TabsTrigger>
-          <TabsTrigger value="practice" className="text-xs gap-1"><Puzzle className="w-3 h-3" />Practice</TabsTrigger>
+          <TabsTrigger value="ai" className="text-xs gap-1"><Bot className="w-3 h-3" />Ask AI</TabsTrigger>
+          <TabsTrigger value="practice" className="text-xs gap-1"><Puzzle className="w-3 h-3" />Solve</TabsTrigger>
         </TabsList>
 
         <TabsContent value="read" className="mt-3">
-          <p className="text-sm text-muted-foreground mb-3">{topic.description}</p>
-          <Button size="sm" variant="outline" onClick={() => navigate(`/algorithm/${topic.slug}`)}>
-            Read Full Guide <ChevronRight className="w-3 h-3 ml-1" />
+          <p className="text-xs text-muted-foreground mb-3">{topic.description}</p>
+          <Button size="sm" variant="outline" className="text-xs h-8" onClick={() => navigate(`/algorithm/${topic.slug}`)}>
+            Read Full Theory & Implementations <ChevronRight className="w-3 h-3 ml-1" />
           </Button>
         </TabsContent>
 
@@ -245,34 +307,34 @@ const TopicContentCard = ({ topic, score }: { topic: typeof TOPICS[0]; score: nu
               className="w-full h-full"
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">{topic.videoTitle}</p>
+          <p className="text-[11px] text-muted-foreground mt-1.5">{topic.videoTitle}</p>
         </TabsContent>
 
         <TabsContent value="ai" className="mt-3">
-          <div className="space-y-3 max-h-64 overflow-y-auto">
+          <div className="space-y-2 max-h-56 overflow-y-auto">
             {messages.filter(m => m.role === 'assistant').slice(-2).map(m => (
-              <div key={m.id} className="bg-muted/20 border border-border/30 rounded-xl p-3 text-sm animate-fade-in-up">
+              <div key={m.id} className="bg-muted/20 border border-border/30 rounded-lg p-3 text-xs leading-relaxed">
                 <MarkdownRenderer content={m.content} />
               </div>
             ))}
           </div>
-          <div className="flex gap-2 mt-3">
+          <div className="flex gap-2 mt-2.5">
             <input
               value={aiInput}
               onChange={e => setAiInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleAiAsk()}
-              placeholder={`Ask about ${topic.title}...`}
-              className="flex-1 h-9 px-3 rounded-lg border border-border/50 bg-muted/20 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
+              placeholder={`Ask AI about ${topic.title}...`}
+              className="flex-1 h-8 px-2.5 rounded-md border border-border/50 bg-muted/20 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50"
             />
-            <Button size="sm" onClick={handleAiAsk} disabled={isLoading || !aiInput.trim()}>
+            <Button size="sm" className="h-8 px-2.5" onClick={handleAiAsk} disabled={isLoading || !aiInput.trim()}>
               {isLoading ? <span className="animate-pulse">...</span> : <Sparkles className="w-3 h-3" />}
             </Button>
           </div>
         </TabsContent>
 
         <TabsContent value="practice" className="mt-3">
-          <Button size="sm" onClick={() => navigate('/practice')}>
-            <Play className="w-3 h-3 mr-1" /> Go to Practice
+          <Button size="sm" className="text-xs h-8" onClick={() => navigate('/practice')}>
+            <Play className="w-3 h-3 mr-1" /> Practice {topic.title} Problems
           </Button>
         </TabsContent>
       </Tabs>
@@ -282,10 +344,13 @@ const TopicContentCard = ({ topic, score }: { topic: typeof TOPICS[0]; score: nu
 
 // ─── Learning Path Stepper ────────────────────────────────────
 const LearningPathStepper = ({ path, scores }: { path: string[]; scores: Record<string, number> }) => (
-  <Card className="p-5 bg-card/80 border-border/50 mb-6">
-    <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-      <Target className="w-5 h-5 text-primary" /> Your Learning Path
-    </h3>
+  <Card className="p-5 bg-card border-border/60 mb-6">
+    <div className="flex items-center justify-between mb-3">
+      <h3 className="font-semibold text-foreground text-sm flex items-center gap-2">
+        <Target className="w-4 h-4 text-primary" /> Personalized Roadmap Sequence
+      </h3>
+      <span className="text-[11px] text-muted-foreground">Prioritized by Greatest Skill Deficit</span>
+    </div>
     <div className="flex items-center gap-2 overflow-x-auto pb-2">
       {path.map((slug, i) => {
         const topic = TOPICS.find(t => t.slug === slug);
@@ -293,10 +358,11 @@ const LearningPathStepper = ({ path, scores }: { path: string[]; scores: Record<
         const done = score >= 70;
         return (
           <React.Fragment key={slug}>
-            {i > 0 && <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />}
-            <div className={`flex items-center gap-2 px-3 py-2 rounded-xl border flex-shrink-0 transition-all ${done ? 'border-cp-easy/40 bg-cp-easy/5' : 'border-border/50 bg-muted/10'}`}>
-              {done ? <CheckCircle className="w-4 h-4 text-cp-easy" /> : <span className="text-xs font-bold text-muted-foreground">{i + 1}</span>}
-              <span className="text-sm font-medium text-foreground">{topic?.title || slug}</span>
+            {i > 0 && <ArrowRight className="w-3.5 h-3.5 text-muted-foreground/60 flex-shrink-0" />}
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border flex-shrink-0 transition-all ${done ? 'border-emerald-500/40 bg-emerald-500/5' : 'border-border/50 bg-muted/10'}`}>
+              {done ? <CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> : <span className="text-xs font-mono font-bold text-muted-foreground">{i + 1}</span>}
+              <span className="text-xs font-medium text-foreground">{topic?.title || slug}</span>
+              <span className="text-[10px] text-muted-foreground font-mono">({score}%)</span>
             </div>
           </React.Fragment>
         );
@@ -307,11 +373,43 @@ const LearningPathStepper = ({ path, scores }: { path: string[]; scores: Record<
 
 // ─── Main Page ────────────────────────────────────────────────
 const LearningHubPage: React.FC = () => {
+  const { user } = useAuth();
   const [quizDone, setQuizDone] = useState(false);
   const [skillScores, setSkillScores] = useState<Record<string, number>>({});
   const [learningPath, setLearningPath] = useState<string[]>([]);
 
-  // Map quiz topics to topic slugs
+  // Load saved state from localStorage or Supabase on mount
+  useEffect(() => {
+    try {
+      const savedScores = localStorage.getItem('algoxai_quiz_scores');
+      const savedPath = localStorage.getItem('algoxai_learning_path');
+
+      if (savedScores && savedPath) {
+        setSkillScores(JSON.parse(savedScores));
+        setLearningPath(JSON.parse(savedPath));
+        setQuizDone(true);
+      } else if (user) {
+        // Attempt fetch from Supabase
+        supabase
+          .from('learning_paths')
+          .select('skill_scores, recommended_path')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .then(({ data }) => {
+            if (data && data.length > 0) {
+              const row = data[0];
+              setSkillScores(row.skill_scores as any);
+              setLearningPath(row.recommended_path as any);
+              setQuizDone(true);
+            }
+          });
+      }
+    } catch {
+      // ignore parse errors
+    }
+  }, [user]);
+
   const topicMap: Record<string, string> = {
     arrays: 'sorting-algorithms',
     recursion: 'backtracking',
@@ -320,30 +418,61 @@ const LearningHubPage: React.FC = () => {
     'binary-search': 'binary-search',
   };
 
-  const handleQuizComplete = (scores: Record<string, number>) => {
-    // Map scores to topic slugs
+  const handleQuizComplete = async (scores: Record<string, number>) => {
     const mapped: Record<string, number> = {};
     Object.entries(scores).forEach(([k, v]) => {
       const slug = topicMap[k] || k;
       mapped[slug] = v;
     });
-    // Fill in missing with 50
-    TOPICS.forEach(t => { if (!(t.slug in mapped)) mapped[t.slug] = 50; });
-    setSkillScores(mapped);
 
-    // Generate path: weakest first
+    TOPICS.forEach(t => {
+      if (!(t.slug in mapped)) mapped[t.slug] = 50;
+    });
+
     const sorted = Object.entries(mapped).sort((a, b) => a[1] - b[1]).map(([slug]) => slug);
+
+    setSkillScores(mapped);
     setLearningPath(sorted);
     setQuizDone(true);
+
+    // Save locally
+    localStorage.setItem('algoxai_quiz_scores', JSON.stringify(mapped));
+    localStorage.setItem('algoxai_learning_path', JSON.stringify(sorted));
+
+    // Save to Supabase if authenticated
+    if (user) {
+      try {
+        await supabase.from('learning_paths').insert({
+          user_id: user.id,
+          skill_scores: mapped,
+          recommended_path: sorted,
+        });
+
+        for (const [slug, score] of Object.entries(mapped)) {
+          await supabase.from('user_topic_progress').insert({
+            user_id: user.id,
+            topic_slug: slug,
+            quiz_score: score,
+            last_activity: new Date().toISOString(),
+          });
+        }
+        toast.success('Assessment results saved to your profile!');
+      } catch (err) {
+        console.error('Failed to sync quiz with Supabase:', err);
+      }
+    } else {
+      toast.info('Assessment saved to browser. Sign in to sync across devices.');
+    }
   };
 
   const handleRetake = () => {
     setQuizDone(false);
     setSkillScores({});
     setLearningPath([]);
+    localStorage.removeItem('algoxai_quiz_scores');
+    localStorage.removeItem('algoxai_learning_path');
   };
 
-  // Find weakest topic for "Next Challenge"
   const weakest = learningPath[0];
   const weakestTopic = TOPICS.find(t => t.slug === weakest);
 
@@ -356,34 +485,41 @@ const LearningHubPage: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Learning Hub</h1>
-          <p className="text-muted-foreground mt-1">Personalized competitive programming roadmap</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Learning Hub</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
+            Personalized algorithmic progression roadmap based on your diagnostic results.
+          </p>
         </div>
-        <Button variant="outline" size="sm" onClick={handleRetake}>
-          <RotateCcw className="w-3 h-3 mr-1" /> Retake Quiz
+        <Button variant="outline" size="sm" onClick={handleRetake} className="gap-1.5 text-xs h-8">
+          <RotateCcw className="w-3.5 h-3.5" />
+          <span>Retake Assessment</span>
         </Button>
       </div>
 
       {/* Learning Path Stepper */}
       <LearningPathStepper path={learningPath} scores={skillScores} />
 
-      {/* Next Challenge */}
+      {/* Next Priority Focus Area */}
       {weakestTopic && (
-        <Card className="p-5 mb-6 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
-          <div className="flex items-center justify-between">
+        <Card className="p-5 mb-8 bg-primary/5 border-primary/20">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <TrendingUp className="w-5 h-5 text-primary" />
+              <div className="w-9 h-9 rounded-lg bg-primary/15 text-primary flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-5 h-5" />
+              </div>
               <div>
-                <p className="text-sm font-semibold text-foreground">Next Challenge: {weakestTopic.title}</p>
-                <p className="text-xs text-muted-foreground">Your weakest area — focus here to improve fastest</p>
+                <p className="text-sm font-semibold text-foreground">Top Priority Focus: {weakestTopic.title}</p>
+                <p className="text-xs text-muted-foreground">
+                  Your greatest assessed deficit ({skillScores[weakestTopic.slug] || 0}%). Prioritizing this topic will yield the fastest performance gains.
+                </p>
               </div>
             </div>
-            <Button size="sm" onClick={() => window.location.hash = weakestTopic.slug}>
-              Start <ChevronRight className="w-3 h-3 ml-1" />
+            <Button size="sm" onClick={() => navigate(`/algorithm/${weakestTopic.slug}`)} className="text-xs h-8 flex-shrink-0">
+              Study Now <ChevronRight className="w-3.5 h-3.5 ml-1" />
             </Button>
           </div>
         </Card>

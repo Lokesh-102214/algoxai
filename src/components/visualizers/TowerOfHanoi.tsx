@@ -185,7 +185,7 @@ const TowerOfHanoi = () => {
           {!isRunning ? (
             <Button 
               onClick={solvePuzzle}
-              className="bg-gradient-to-r from-primary to-secondary"
+              className="shadow-sm"
             >
               <Play className="w-4 h-4 mr-2" />
               Solve
@@ -215,11 +215,11 @@ const TowerOfHanoi = () => {
           <div className="text-sm text-muted-foreground">Current Moves</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-secondary">{minMoves}</div>
+          <div className="text-2xl font-bold text-emerald-400">{minMoves}</div>
           <div className="text-sm text-muted-foreground">Minimum Moves</div>
         </Card>
         <Card className="p-4 text-center">
-          <div className="text-2xl font-bold text-accent">{numDisks}</div>
+          <div className="text-2xl font-bold text-foreground">{numDisks}</div>
           <div className="text-sm text-muted-foreground">Number of Disks</div>
         </Card>
       </div>
@@ -291,7 +291,7 @@ const TowerOfHanoi = () => {
       )}
 
       {/* Algorithm Explanation */}
-      <Card className="p-4 bg-gradient-to-br from-primary/5 to-secondary/5">
+      <Card className="p-4 bg-card border border-border/70">
         <h3 className="text-lg font-semibold mb-3">🗼 Tower of Hanoi Algorithm</h3>
         <div className="text-sm space-y-2">
           <p><strong>Objective:</strong> Move all disks from the source tower to the destination tower.</p>

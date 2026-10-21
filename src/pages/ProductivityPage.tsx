@@ -76,7 +76,7 @@ const AnalyticsTab = () => {
   return (
     <div className="space-y-6">
       {/* Streak */}
-      <Card className="p-5 bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
+      <Card className="p-5 bg-card border border-border/70">
         <div className="flex items-center gap-3">
           <Flame className="w-8 h-8 text-cp-medium" />
           <div>
@@ -107,7 +107,7 @@ const AnalyticsTab = () => {
         {/* Topic Coverage */}
         <Card className="p-5 bg-card/80 border-border/50">
           <h3 className="font-semibold text-foreground mb-4 flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-secondary" /> Topic Coverage
+            <BarChart3 className="w-4 h-4 text-emerald-400" /> Topic Coverage
           </h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">

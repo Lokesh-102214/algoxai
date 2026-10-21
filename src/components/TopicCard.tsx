@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
-import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Clock, Users, TrendingUp } from "lucide-react";
+import { Clock, BookOpen, Layers } from "lucide-react";
+
 interface TopicCardProps {
   title: string;
   description: string;
@@ -12,6 +12,7 @@ interface TopicCardProps {
   estimatedTime: string;
   popularity: number;
 }
+
 const TopicCard = ({
   title,
   description,
@@ -20,7 +21,6 @@ const TopicCard = ({
   icon,
   slug,
   estimatedTime,
-  popularity
 }: TopicCardProps) => {
   const getDifficultyColor = (diff: string) => {
     switch (diff) {
@@ -34,63 +34,43 @@ const TopicCard = ({
         return "cp-difficulty-easy";
     }
   };
-  return <Link to={`/algorithm/${slug}`} className="group block">
-      <div className="cp-card-interactive h-full animate-fade-in-up">
-        <div className="flex items-start justify-between mb-4">
-          <div className="p-4 bg-[var(--gradient-primary)] rounded-xl shadow-[var(--shadow-glow-primary)]
-                          transition-[var(--transition-bounce)] group-hover:scale-110 group-hover:animate-float">
-            <div className="text-primary-foreground">
+
+  return (
+    <Link to={`/algorithm/${slug}`} className="group block h-full">
+      <div className="h-full rounded-xl border border-border/60 bg-card p-6 transition-all duration-200 hover:border-primary/50 hover:bg-muted/10 flex flex-col justify-between">
+        <div>
+          <div className="flex items-start justify-between mb-4">
+            <div className="p-3 bg-primary/10 text-primary rounded-lg border border-primary/20">
               {icon}
             </div>
+            <Badge className={`${getDifficultyColor(difficulty)} text-xs px-2.5 py-0.5 font-medium`}>
+              {difficulty}
+            </Badge>
           </div>
-          <Badge className={`${getDifficultyColor(difficulty)} text-xs px-3 py-1 font-semibold
-                            transition-[var(--transition-bounce)] group-hover:scale-110`}>
-            {difficulty}
-          </Badge>
+
+          <h3 className="text-lg font-semibold mb-2 text-foreground group-hover:text-primary transition-colors">
+            {title}
+          </h3>
+
+          <p className="text-muted-foreground text-sm mb-4 line-clamp-2 leading-relaxed">
+            {description}
+          </p>
         </div>
-        
-        <h3 className="text-xl font-bold mb-3 text-foreground group-hover:text-primary transition-[var(--transition-smooth)] leading-tight">
-          {title}
-        </h3>
-        
-        <p className="text-muted-foreground text-sm mb-6 line-clamp-2 leading-relaxed
-                      group-hover:text-foreground transition-[var(--transition-smooth)]">
-          {description}
-        </p>
-        
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
-                          group-hover:text-foreground group-hover:scale-105">
-            <Clock className="w-4 h-4" />
-            <span className="font-medium">{estimatedTime}</span>
+
+        <div className="pt-4 border-t border-border/40 flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center space-x-1.5">
+            <Clock className="w-3.5 h-3.5" />
+            <span>{estimatedTime}</span>
           </div>
-          
-          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
-                          group-hover:text-foreground group-hover:scale-105">
-            <Users className="w-4 h-4" />
-            <span className="font-medium">{problems}</span>
-          </div>
-          
-          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] 
-                          group-hover:text-foreground group-hover:scale-105">
-            <TrendingUp className="w-4 h-4" />
-            <span className="font-medium">{popularity}%</span>
+
+          <div className="flex items-center space-x-1.5">
+            <BookOpen className="w-3.5 h-3.5" />
+            <span>{problems} problems</span>
           </div>
         </div>
-        
-        {/* Animated progress bar */}
-        <div className="mt-4 w-full bg-muted rounded-full h-1.5 overflow-hidden">
-          <div className="h-full bg-[var(--gradient-primary)] transition-all duration-1000 
-                       group-hover:animate-shimmer" style={{
-          width: `${popularity}%`
-        }} />
-        </div>
-        
-        {/* Hover shine effect */}
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent 
-                        translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 
-                        rounded-2xl pointer-events-none" />
       </div>
-    </Link>;
+    </Link>
+  );
 };
+
 export default TopicCard;

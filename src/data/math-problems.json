@@ -1,0 +1,102 @@
+[
+  {
+    "id": 1,
+    "title": "Prime Factorization & Sieve of Eratosthenes",
+    "topic": "Number Theory",
+    "difficulty": "Easy",
+    "difficultyRating": 1,
+    "description": "Given an integer n <= 10^7, compute all prime numbers up to n using the Sieve of Eratosthenes in O(n log log n) time.",
+    "formula": "T(n) = \\sum_{p \\le n} \\frac{n}{p} = O(n \\log \\log n)",
+    "solutionHint": "Create a boolean array initialized to true. For each prime p starting from 2 up to sqrt(n), mark multiples p*p, p*(p+1)... as false."
+  },
+  {
+    "id": 2,
+    "title": "Extended Euclidean Algorithm & Modular Inverse",
+    "topic": "Number Theory",
+    "difficulty": "Medium",
+    "difficultyRating": 3,
+    "description": "Find integers x and y such that a*x + b*y = gcd(a, b), and compute the modular multiplicative inverse of a modulo m when gcd(a, m) = 1.",
+    "formula": "a \\cdot x \\equiv 1 \\pmod{m} \\iff a \\cdot x + m \\cdot y = 1",
+    "solutionHint": "Use recursion where gcd(a, b) yields x1, y1 from gcd(b, a % b). Update x = y1, y = x1 - (a/b) * y1."
+  },
+  {
+    "id": 3,
+    "title": "Fast Modular Exponentiation",
+    "topic": "Number Theory",
+    "difficulty": "Easy",
+    "difficultyRating": 2,
+    "description": "Compute (base^exp) % mod in O(log exp) time using binary exponentiation.",
+    "formula": "a^{2k} = (a^k)^2, \\quad a^{2k+1} = a \\cdot a^{2k}",
+    "solutionHint": "Square the base and halve the exponent at each step when exp is even; multiply result by base when exp is odd."
+  },
+  {
+    "id": 4,
+    "title": "Combinations: n Choose k modulo 10^9 + 7",
+    "topic": "Combinatorics",
+    "difficulty": "Medium",
+    "difficultyRating": 3,
+    "description": "Precompute factorials and inverse factorials up to N = 10^6 to query nCr % (10^9 + 7) in O(1) time per query.",
+    "formula": "\\binom{n}{k} = \\frac{n!}{k!(n-k)!} \\pmod{p}",
+    "solutionHint": "Compute fact[i] = fact[i-1] * i % mod. Compute invFact[n] using Fermat's Little Theorem, then backward fill invFact[i-1] = invFact[i] * i % mod."
+  },
+  {
+    "id": 5,
+    "title": "Catalan Numbers & Balanced Parentheses",
+    "topic": "Combinatorics",
+    "difficulty": "Hard",
+    "difficultyRating": 4,
+    "description": "Count the number of valid parenthesizations of length 2n, non-crossing partitions, and distinct binary search trees with n keys.",
+    "formula": "C_n = \\frac{1}{n+1} \\binom{2n}{n} = \\frac{(2n)!}{(n+1)!n!}",
+    "solutionHint": "Recurrence: C_0 = 1, C_{n+1} = sum(C_i * C_{n-i}) for i from 0 to n. Alternatively, compute using combination formula."
+  },
+  {
+    "id": 6,
+    "title": "Inclusion-Exclusion Principle",
+    "topic": "Combinatorics",
+    "difficulty": "Medium",
+    "difficultyRating": 3,
+    "description": "Find the count of integers in [1, N] that are divisible by at least one prime from a given set of primes P (|P| <= 15).",
+    "formula": "|\\bigcup_{i=1}^n A_i| = \\sum_k (-1)^{k-1} \\sum_{|J|=k} |\\bigcap_{j \\in J} A_j|",
+    "solutionHint": "Iterate over all 2^|P| bitmasks. For each non-empty mask, compute the product of selected primes. Add or subtract N / product based on parity of set bits."
+  },
+  {
+    "id": 7,
+    "title": "Linear Diophantine Equations",
+    "topic": "Algebra",
+    "difficulty": "Medium",
+    "difficultyRating": 3,
+    "description": "Determine if integer solutions exist for a*x + b*y = c, and find the general form of all integer pairs (x, y).",
+    "formula": "a x + b y = c \\text{ has solutions} \\iff \\gcd(a, b) \\mid c",
+    "solutionHint": "Compute g = gcd(a, b). If c % g != 0, return false. Multiply base Bezout coefficients by c / g to get particular solution (x0, y0)."
+  },
+  {
+    "id": 8,
+    "title": "Expected Value of Geometric Distribution",
+    "topic": "Probability",
+    "difficulty": "Medium",
+    "difficultyRating": 3,
+    "description": "Given a Bernoulli trial with success probability p, compute the expected number of trials until the first success.",
+    "formula": "E[X] = \\sum_{k=1}^{\\infty} k (1-p)^{k-1} p = \\frac{1}{p}",
+    "solutionHint": "Use law of total expectation: E = 1*p + (1-p)*(1 + E), which simplifies to p*E = 1, hence E = 1/p."
+  },
+  {
+    "id": 9,
+    "title": "Convex Hull: Graham Scan",
+    "topic": "Geometry",
+    "difficulty": "Hard",
+    "difficultyRating": 4,
+    "description": "Given a set of n 2D points, compute the vertices of the smallest convex polygon enclosing all points in O(n log n).",
+    "formula": "\\vec{u} \\times \\vec{v} = u_x v_y - u_y v_x",
+    "solutionHint": "Sort points by x (then y). Build lower hull and upper hull using a stack, discarding points that make a non-left turn using cross product orientation test."
+  },
+  {
+    "id": 10,
+    "title": "Chinese Remainder Theorem",
+    "topic": "Number Theory",
+    "difficulty": "Hard",
+    "difficultyRating": 4,
+    "description": "Solve systems of simultaneous linear congruences x = a_i (mod m_i) for pairwise coprime moduli m_i.",
+    "formula": "x \\equiv \\sum_{i=1}^k a_i M_i y_i \\pmod{M}, \\quad M = \\prod m_i, \\quad M_i = \\frac{M}{m_i}",
+    "solutionHint": "For each congruence, compute M_i = M / m_i, find inverse y_i of M_i mod m_i using Extended Euclidean algorithm, sum a_i * M_i * y_i."
+  }
+]

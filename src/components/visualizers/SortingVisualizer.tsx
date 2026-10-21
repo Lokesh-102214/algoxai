@@ -148,25 +148,25 @@ const SortingVisualizer = () => {
     generateArray();
   };
 
-  // Get bar color based on state with enhanced styling
+  // Get bar color based on state
   const getBarColor = (index: number) => {
     if (sortedIndices.includes(index)) {
-      return "bg-secondary shadow-[var(--shadow-glow-secondary)]"; // Sorted - Neon Green
+      return "bg-emerald-500"; // Sorted
     }
     if (currentIndices.includes(index)) {
-      return "bg-destructive shadow-[0_0_15px_hsl(var(--destructive)/0.5)]"; // Currently comparing - Bright Red
+      return "bg-amber-500"; // Currently comparing
     }
-    return "bg-primary shadow-[var(--shadow-glow-primary)]"; // Default - Bright Cyan
+    return "bg-primary/80 hover:bg-primary"; // Default
   };
 
   return (
     <div className="space-y-6">
-        {/* Enhanced Controls with animations */}
+        {/* Controls */}
         <div className="flex flex-wrap gap-4 items-end animate-fade-in-up">
           <div className="space-y-2">
             <Label className="text-sm font-medium">Algorithm</Label>
             <Select value={algorithm} onValueChange={setAlgorithm} disabled={sorting}>
-              <SelectTrigger className="w-40 bg-card border-border hover:border-primary/50 transition-[var(--transition-smooth)]">
+              <SelectTrigger className="w-40 bg-card border-border hover:border-primary/50 transition-colors">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
@@ -206,9 +206,7 @@ const SortingVisualizer = () => {
             <Button 
               onClick={startSorting}
               disabled={sorting}
-              className="bg-[var(--gradient-primary)] text-primary-foreground px-6
-                         shadow-[var(--shadow-glow-primary)] hover:shadow-[var(--shadow-glow-secondary)]
-                         transition-[var(--transition-bounce)] hover:scale-105 btn-glow"
+              className="px-6 shadow-sm"
             >
               <Play className="w-4 h-4 mr-2" />
               Start Sort
@@ -218,8 +216,7 @@ const SortingVisualizer = () => {
               onClick={resetArray}
               variant="outline"
               disabled={sorting}
-              className="border-border hover:border-primary/50 hover:bg-primary/10 
-                         transition-[var(--transition-smooth)] hover:scale-105"
+              className="border-border hover:border-primary/50 hover:bg-muted/30 transition-colors"
             >
               <RotateCcw className="w-4 h-4 mr-2" />
               Reset
@@ -229,8 +226,7 @@ const SortingVisualizer = () => {
               onClick={generateArray}
               variant="outline"
               disabled={sorting}
-              className="border-border hover:border-secondary/50 hover:bg-secondary/10 
-                         transition-[var(--transition-smooth)] hover:scale-105"
+              className="border-border hover:border-primary/50 hover:bg-muted/30 transition-colors"
             >
               <Shuffle className="w-4 h-4 mr-2" />
               Generate
@@ -238,40 +234,36 @@ const SortingVisualizer = () => {
           </div>
         </div>
 
-      {/* Enhanced Visualization Area */}
-      <div className="glow-border rounded-2xl p-6 bg-[var(--gradient-card)] min-h-96 
-                      shadow-[var(--shadow-card)] animate-fade-in-up">
+      {/* Visualization Area */}
+      <div className="border border-border/70 rounded-xl p-6 bg-card min-h-96 
+                      shadow-sm animate-fade-in-up">
         <div className="flex items-end justify-center space-x-1 h-80">
           {array.map((value, index) => (
             <div
               key={index}
-              className={`transition-all duration-300 rounded-t-lg shadow-sm 
-                         ${getBarColor(index)} 
-                         ${sorting ? 'animate-pulse-slow' : 'hover:scale-105'}
-                         ${currentIndices.includes(index) ? 'animate-pulse-code' : ''}`}
+              className={`transition-all duration-200 rounded-t-sm shadow-none ${getBarColor(index)}`}
               style={{
                 height: `${(value / Math.max(...array)) * 280}px`,
                 width: `${Math.max(800 / array.length - 2, 8)}px`,
-                animationDelay: `${index * 0.05}s`,
               }}
               title={`Value: ${value}, Index: ${index}`}
             />
           ))}
         </div>
         
-        {/* Enhanced Legend */}
+        {/* Legend */}
         <div className="flex justify-center space-x-8 mt-6 text-sm">
-          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] hover:scale-105">
-            <div className="w-4 h-4 bg-primary rounded shadow-[var(--shadow-glow-primary)]"></div>
-            <span className="font-medium">Unsorted</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-3.5 h-3.5 bg-primary/80 rounded-sm"></div>
+            <span className="font-medium text-muted-foreground">Unsorted</span>
           </div>
-          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] hover:scale-105">
-            <div className="w-4 h-4 bg-destructive rounded shadow-[0_0_10px_hsl(var(--destructive)/0.4)]"></div>
-            <span className="font-medium">Comparing</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-3.5 h-3.5 bg-amber-500 rounded-sm"></div>
+            <span className="font-medium text-muted-foreground">Comparing</span>
           </div>
-          <div className="flex items-center space-x-2 transition-[var(--transition-smooth)] hover:scale-105">
-            <div className="w-4 h-4 bg-secondary rounded shadow-[var(--shadow-glow-secondary)]"></div>
-            <span className="font-medium">Sorted</span>
+          <div className="flex items-center space-x-2">
+            <div className="w-3.5 h-3.5 bg-emerald-500 rounded-sm"></div>
+            <span className="font-medium text-muted-foreground">Sorted</span>
           </div>
         </div>
       </div>

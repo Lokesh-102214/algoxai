@@ -138,12 +138,12 @@ const CalendarPage = () => {
           <div className="text-sm text-muted-foreground">Contests Joined</div>
         </Card>
         <Card className="p-4 text-center">
-          <Users className="w-6 h-6 text-secondary mx-auto mb-2" />
+          <Users className="w-6 h-6 text-emerald-400 mx-auto mb-2" />
           <div className="text-2xl font-bold">1,247</div>
           <div className="text-sm text-muted-foreground">Best Rank</div>
         </Card>
         <Card className="p-4 text-center">
-          <Clock className="w-6 h-6 text-accent mx-auto mb-2" />
+          <Clock className="w-6 h-6 text-cyan-400 mx-auto mb-2" />
           <div className="text-2xl font-bold">4</div>
           <div className="text-sm text-muted-foreground">This Week</div>
         </Card>

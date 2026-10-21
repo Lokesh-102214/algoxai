@@ -1,275 +1,271 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { 
-  User, 
-  Trophy, 
-  Target, 
-  Calendar, 
-  TrendingUp, 
+import { Input } from "@/components/ui/input";
+import {
+  User,
+  Trophy,
+  Target,
+  Calendar,
+  TrendingUp,
   Award,
-  Clock,
   Code2,
-  Star,
-  GitBranch
+  GitBranch,
+  LogIn,
+  ExternalLink,
+  CheckCircle2,
+  Flame,
+  BookOpen
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import rawProblems from "@/data/problems.json";
+import { toast } from "sonner";
 
-const ProfilePage = () => {
-  // Mock user data - Codeforces style
-  const userData = {
-    username: "competitive_coder",
-    fullName: "Alex Johnson",
-    rating: 1847,
-    maxRating: 1892,
-    rank: "Expert",
-    country: "United States",
-    organization: "Stanford University",
-    joinDate: "Jan 15, 2022",
-    lastActive: "2 hours ago",
-    avatar: "👨‍💻",
-    contribution: 156
-  };
+const ProfilePage: React.FC = () => {
+  const { user } = useAuth();
+  const [cfHandle, setCfHandle] = useState(() => localStorage.getItem("algoxai_cf_handle") || "");
+  const [handleInput, setHandleInput] = useState(cfHandle);
+  const [cfData, setCfData] = useState<{ rating?: number; rank?: string; maxRating?: number } | null>(null);
+  const [cfLoading, setCfLoading] = useState(false);
 
-  const stats = {
-    problemsSolved: 487,
-    contestsParticipated: 23,
-    streak: 15,
-    submissions: 1247,
-    acceptedSubmissions: 892,
-    accuracy: Math.round((892 / 1247) * 100)
-  };
+  // Solved problems count
+  const [solvedCount, setSolvedCount] = useState(0);
+  // Quiz scores
+  const [quizScores, setQuizScores] = useState<Record<string, number>>({});
 
-  const recentSubmissions = [
-    { problem: "Two Sum", platform: "LeetCode", verdict: "Accepted", time: "2 hours ago", language: "C++" },
-    { problem: "Maximum Subarray", platform: "LeetCode", verdict: "Accepted", time: "5 hours ago", language: "C++" },
-    { problem: "Coin Change", platform: "LeetCode", verdict: "Wrong Answer", time: "1 day ago", language: "Python" },
-    { problem: "Graph Traversal", platform: "Codeforces", verdict: "Accepted", time: "2 days ago", language: "C++" },
-    { problem: "Dynamic Programming", platform: "Codeforces", verdict: "Time Limit Exceeded", time: "3 days ago", language: "C++" }
-  ];
-
-  const achievements = [
-    { title: "First AC", description: "Solved your first problem", date: "Jan 15, 2022", icon: "🎉" },
-    { title: "Speed Demon", description: "Solved 10 problems in one day", date: "Mar 22, 2022", icon: "⚡" },
-    { title: "Contest Warrior", description: "Participated in 10 contests", date: "Jun 10, 2022", icon: "🏆" },
-    { title: "Streak Master", description: "15-day solving streak", date: "Current", icon: "🔥" }
-  ];
-
-  const topicProgress = [
-    { topic: "Arrays", solved: 45, total: 60, percentage: 75 },
-    { topic: "Dynamic Programming", solved: 32, total: 50, percentage: 64 },
-    { topic: "Graphs", solved: 28, total: 40, percentage: 70 },
-    { topic: "Greedy", solved: 22, total: 30, percentage: 73 },
-    { topic: "Binary Search", solved: 18, total: 25, percentage: 72 }
-  ];
-
-  const getRankColor = (rank: string) => {
-    switch (rank) {
-      case "Newbie": return "text-gray-500";
-      case "Pupil": return "text-green-500";
-      case "Specialist": return "text-cyan-500";
-      case "Expert": return "text-blue-500";
-      case "Candidate Master": return "text-purple-500";
-      case "Master": return "text-orange-500";
-      default: return "text-blue-500";
+  useEffect(() => {
+    try {
+      const savedSolved = localStorage.getItem("algoxai_solved_problems");
+      if (savedSolved) {
+        const parsed = JSON.parse(savedSolved);
+        setSolvedCount(Object.values(parsed).filter(Boolean).length);
+      }
+      const savedScores = localStorage.getItem("algoxai_quiz_scores");
+      if (savedScores) {
+        setQuizScores(JSON.parse(savedScores));
+      }
+    } catch {
+      // ignore
     }
+  }, []);
+
+  // Fetch Codeforces public profile if handle is present
+  useEffect(() => {
+    if (!cfHandle) return;
+    setCfLoading(true);
+    fetch(`https://codeforces.com/api/user.info?handles=${encodeURIComponent(cfHandle)}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.status === "OK" && data.result?.[0]) {
+          const u = data.result[0];
+          setCfData({
+            rating: u.rating,
+            rank: u.rank,
+            maxRating: u.maxRating,
+          });
+        }
+      })
+      .catch(() => {
+        // CF API may be offline or rate-limited
+      })
+      .finally(() => setCfLoading(false));
+  }, [cfHandle]);
+
+  const handleSaveHandle = (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = handleInput.trim();
+    setCfHandle(clean);
+    localStorage.setItem("algoxai_cf_handle", clean);
+    toast.success("Codeforces handle saved!");
   };
+
+  const topicMastery = [
+    { name: "Binary Search", score: quizScores["binary-search"] || 50 },
+    { name: "Sorting Algorithms", score: quizScores["sorting-algorithms"] || 50 },
+    { name: "Graph Algorithms", score: quizScores["graph-algorithms"] || 50 },
+    { name: "Dynamic Programming", score: quizScores["dynamic-programming"] || 50 },
+    { name: "Greedy Algorithms", score: quizScores["greedy-algorithms"] || 50 },
+    { name: "Backtracking", score: quizScores["backtracking"] || 50 },
+  ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 max-w-5xl">
       {/* Profile Header */}
-      <Card className="p-6 mb-8">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-          <div className="text-6xl">{userData.avatar}</div>
-          
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold">{userData.fullName}</h1>
-              <Badge className={getRankColor(userData.rank)} variant="outline">
-                {userData.rank}
-              </Badge>
+      <Card className="p-6 md:p-8 mb-8 border-border/60 bg-card">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20 text-2xl font-bold font-mono">
+              {user?.email ? user.email.charAt(0).toUpperCase() : <User className="w-8 h-8" />}
             </div>
-            <p className="text-muted-foreground mb-2">@{userData.username}</p>
-            
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Rating: </span>
-                <span className="font-semibold text-primary">{userData.rating}</span>
+
+            <div>
+              <div className="flex items-center gap-3 mb-1">
+                <h1 className="text-2xl font-bold text-foreground">
+                  {user ? user.email?.split("@")[0] : "Guest Learner"}
+                </h1>
+                {cfData?.rank && (
+                  <Badge variant="outline" className="capitalize text-primary font-mono text-xs">
+                    {cfData.rank}
+                  </Badge>
+                )}
               </div>
-              <div>
-                <span className="text-muted-foreground">Max Rating: </span>
-                <span className="font-semibold">{userData.maxRating}</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Country: </span>
-                <span>{userData.country}</span>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Joined: </span>
-                <span>{userData.joinDate}</span>
-              </div>
+              <p className="text-xs text-muted-foreground font-mono">
+                {user ? user.email : "Not signed in • Local browser storage"}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Account: {user ? "Cloud Synced (Supabase)" : "Guest Mode (Local)"}
+              </p>
             </div>
           </div>
-          
-          <div className="text-right">
-            <div className="text-2xl font-bold text-primary mb-1">{stats.problemsSolved}</div>
-            <div className="text-sm text-muted-foreground">Problems Solved</div>
-          </div>
+
+          {!user && (
+            <Link to="/auth">
+              <Button size="sm" className="gap-2">
+                <LogIn className="w-4 h-4" />
+                Sign In to Sync
+              </Button>
+            </Link>
+          )}
         </div>
       </Card>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column */}
+        {/* Left Column: Stats & Mastery */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Statistics */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <TrendingUp className="w-5 h-5 mr-2 text-primary" />
-              Statistics
+          {/* Key Metrics */}
+          <Card className="p-6 border-border/60 bg-card">
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2 text-foreground">
+              <TrendingUp className="w-4 h-4 text-primary" />
+              Verified Learning Metrics
             </h2>
-            
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <Target className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold">{stats.problemsSolved}</div>
-                <div className="text-sm text-muted-foreground">Problems Solved</div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 text-center">
+                <Target className="w-5 h-5 text-primary mx-auto mb-1.5" />
+                <div className="text-xl font-bold text-foreground">{solvedCount} / {rawProblems.length}</div>
+                <div className="text-xs text-muted-foreground">Problems Solved</div>
               </div>
-              
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <Trophy className="w-6 h-6 text-secondary mx-auto mb-2" />
-                <div className="text-2xl font-bold">{stats.contestsParticipated}</div>
-                <div className="text-sm text-muted-foreground">Contests</div>
+
+              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 text-center">
+                <BookOpen className="w-5 h-5 text-emerald-500 mx-auto mb-1.5" />
+                <div className="text-xl font-bold text-foreground">
+                  {Object.keys(quizScores).length > 0 ? "Completed" : "Pending"}
+                </div>
+                <div className="text-xs text-muted-foreground">Diagnostic Quiz</div>
               </div>
-              
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <Calendar className="w-6 h-6 text-accent mx-auto mb-2" />
-                <div className="text-2xl font-bold">{stats.streak}</div>
-                <div className="text-sm text-muted-foreground">Day Streak</div>
-              </div>
-              
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <Code2 className="w-6 h-6 text-primary mx-auto mb-2" />
-                <div className="text-2xl font-bold">{stats.submissions}</div>
-                <div className="text-sm text-muted-foreground">Submissions</div>
-              </div>
-              
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <Award className="w-6 h-6 text-cp-easy mx-auto mb-2" />
-                <div className="text-2xl font-bold">{stats.acceptedSubmissions}</div>
-                <div className="text-sm text-muted-foreground">Accepted</div>
-              </div>
-              
-              <div className="text-center p-4 bg-muted rounded-lg">
-                <TrendingUp className="w-6 h-6 text-cp-medium mx-auto mb-2" />
-                <div className="text-2xl font-bold">{stats.accuracy}%</div>
-                <div className="text-sm text-muted-foreground">Accuracy</div>
+
+              <div className="p-4 rounded-xl bg-muted/20 border border-border/40 text-center">
+                <Flame className="w-5 h-5 text-amber-500 mx-auto mb-1.5" />
+                <div className="text-xl font-bold text-foreground">{solvedCount > 0 ? "Active" : "Ready"}</div>
+                <div className="text-xs text-muted-foreground">Practice Status</div>
               </div>
             </div>
           </Card>
 
-          {/* Topic Progress */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <GitBranch className="w-5 h-5 mr-2 text-primary" />
-              Topic Progress
-            </h2>
-            
+          {/* Assessed Topic Mastery */}
+          <Card className="p-6 border-border/60 bg-card">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-semibold flex items-center gap-2 text-foreground">
+                <GitBranch className="w-4 h-4 text-primary" />
+                Topic Mastery Distribution
+              </h2>
+              <Link to="/learning-hub">
+                <Button variant="ghost" size="sm" className="text-xs text-primary h-7 px-2">
+                  Retake Quiz
+                </Button>
+              </Link>
+            </div>
+
             <div className="space-y-4">
-              {topicProgress.map((topic) => (
-                <div key={topic.topic}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium">{topic.topic}</span>
-                    <span className="text-sm text-muted-foreground">
-                      {topic.solved}/{topic.total} ({topic.percentage}%)
-                    </span>
+              {topicMastery.map((topic) => (
+                <div key={topic.name}>
+                  <div className="flex justify-between items-center text-xs mb-1.5">
+                    <span className="font-medium text-foreground">{topic.name}</span>
+                    <span className="text-muted-foreground font-mono">{topic.score}%</span>
                   </div>
-                  <Progress value={topic.percentage} className="h-2" />
+                  <Progress value={topic.score} className="h-1.5" />
                 </div>
               ))}
-            </div>
-          </Card>
-
-          {/* Recent Submissions */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <Clock className="w-5 h-5 mr-2 text-primary" />
-              Recent Submissions
-            </h2>
-            
-            <div className="space-y-3">
-              {recentSubmissions.map((submission, index) => {
-                const verdictColor = submission.verdict === "Accepted" 
-                  ? "text-cp-easy" 
-                  : submission.verdict.includes("Wrong") 
-                    ? "text-cp-hard" 
-                    : "text-cp-medium";
-                
-                return (
-                  <div key={index} className="flex items-center justify-between p-3 bg-muted rounded-lg">
-                    <div>
-                      <div className="font-medium">{submission.problem}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {submission.platform} • {submission.language}
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`font-medium ${verdictColor}`}>
-                        {submission.verdict}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {submission.time}
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </Card>
         </div>
 
-        {/* Right Column */}
+        {/* Right Column: Codeforces Link & Shortcuts */}
         <div className="space-y-6">
-          {/* Achievements */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <Star className="w-5 h-5 mr-2 text-primary" />
-              Achievements
-            </h2>
-            
-            <div className="space-y-4">
-              {achievements.map((achievement, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="text-2xl">{achievement.icon}</div>
-                  <div>
-                    <div className="font-medium">{achievement.title}</div>
-                    <div className="text-sm text-muted-foreground">
-                      {achievement.description}
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1">
-                      {achievement.date}
-                    </div>
-                  </div>
+          {/* Codeforces Connect Card */}
+          <Card className="p-6 border-border/60 bg-card">
+            <h3 className="text-base font-semibold mb-2 flex items-center gap-2">
+              <Trophy className="w-4 h-4 text-primary" />
+              Codeforces Sync
+            </h3>
+            <p className="text-xs text-muted-foreground mb-4">
+              Enter your public handle to pull verified rating data for adaptive practice.
+            </p>
+
+            <form onSubmit={handleSaveHandle} className="space-y-3">
+              <Input
+                placeholder="CF handle (e.g. tourist)"
+                value={handleInput}
+                onChange={(e) => setHandleInput(e.target.value)}
+                className="h-8 text-xs font-mono"
+              />
+              <Button type="submit" size="sm" className="w-full h-8 text-xs">
+                Save & Sync
+              </Button>
+            </form>
+
+            {cfData?.rating && (
+              <div className="mt-4 pt-4 border-t border-border/40 text-xs space-y-1.5">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Current Rating:</span>
+                  <span className="font-bold text-primary font-mono">{cfData.rating}</span>
                 </div>
-              ))}
-            </div>
+                {cfData.maxRating && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Peak Rating:</span>
+                    <span className="font-medium font-mono">{cfData.maxRating}</span>
+                  </div>
+                )}
+                <div className="pt-2">
+                  <a
+                    href={`https://codeforces.com/profile/${cfHandle}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center text-primary hover:underline"
+                  >
+                    View Official Profile
+                    <ExternalLink className="w-3 h-3 ml-1" />
+                  </a>
+                </div>
+              </div>
+            )}
           </Card>
 
-          {/* Quick Actions */}
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-            <div className="space-y-3">
-              <Button className="w-full">
-                <Target className="w-4 h-4 mr-2" />
-                Solve Random Problem
-              </Button>
-              <Button variant="outline" className="w-full">
-                <Calendar className="w-4 h-4 mr-2" />
-                Join Next Contest
-              </Button>
-              <Button variant="outline" className="w-full">
-                <TrendingUp className="w-4 h-4 mr-2" />
-                View Analytics
-              </Button>
+          {/* Quick Learning Shortcuts */}
+          <Card className="p-6 border-border/60 bg-card">
+            <h3 className="text-base font-semibold mb-3">Jump In</h3>
+            <div className="space-y-2">
+              <Link to="/learning-hub">
+                <Button variant="outline" size="sm" className="w-full justify-start text-xs h-8">
+                  <Target className="w-3.5 h-3.5 mr-2 text-primary" />
+                  Personalized Roadmap
+                </Button>
+              </Link>
+              <Link to="/practice">
+                <Button variant="outline" size="sm" className="w-full justify-start text-xs h-8">
+                  <Code2 className="w-3.5 h-3.5 mr-2 text-primary" />
+                  Solve Recommended Problems
+                </Button>
+              </Link>
+              <Link to="/ai">
+                <Button variant="outline" size="sm" className="w-full justify-start text-xs h-8">
+                  <Award className="w-3.5 h-3.5 mr-2 text-primary" />
+                  AI Code Reviewer
+                </Button>
+              </Link>
             </div>
           </Card>
         </div>

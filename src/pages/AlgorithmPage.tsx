@@ -982,7 +982,7 @@ int main() {
 
       {/* Practice Section */}
       <section className="mt-12">
-        <Card className="p-6 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <Card className="p-6 bg-card border border-border/70">
           <h3 className="text-xl font-semibold mb-4">Ready to Practice?</h3>
           <p className="text-muted-foreground mb-4">
             Test your understanding with curated problems from LeetCode and Codeforces.
