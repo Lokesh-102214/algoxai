@@ -1,0 +1,14 @@
+name: Accessibility issue
+description: Report a barrier in a visualizer or site flow.
+title: "a11y: "
+labels: ["accessibility", "good first issue"]
+body:
+  - type: textarea
+    attributes:
+      label: Barrier
+      description: Describe what is difficult or unavailable.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Suggested improvement

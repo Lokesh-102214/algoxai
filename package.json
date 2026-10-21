@@ -1,7 +1,7 @@
 {
   "name": "algoxai",
   "version": "1.0.0",
-  "description": "AI-native algorithm learning platform and interactive visualizer component library for competitive programming and computer science education.",
+  "description": "Open-source interactive 3D algorithm visualizers backed by reusable, tested TypeScript engines.",
   "type": "module",
   "license": "MIT",
   "author": "Lokesh <https://github.com/Lokesh-102214>",
@@ -16,6 +16,10 @@
   "keywords": [
     "algorithms",
     "data-structures",
+    "visualization",
+    "education",
+    "threejs",
+    "react-three-fiber",
     "competitive-programming",
     "algorithm-visualizer",
     "react-components",

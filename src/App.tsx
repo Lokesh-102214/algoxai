@@ -37,7 +37,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner position="top-right" richColors />
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
             <Header />
             <main className="pt-16 flex-1">

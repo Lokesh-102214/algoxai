@@ -1,0 +1,23 @@
+name: New visualizer
+description: Propose an interactive algorithm visualizer.
+title: "visualizer: "
+labels: ["new visualizer", "good first issue"]
+body:
+  - type: textarea
+    attributes:
+      label: Learner problem
+      description: What concept is hard to understand, and why would interaction help?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Interaction model
+      description: What can the learner change or inspect?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Engine outline
+      description: Describe the pure inputs, outputs, and operation trace.
+    validations:
+      required: true
