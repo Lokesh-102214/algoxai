@@ -13,7 +13,7 @@ import { useAIChat } from '@/hooks/useAIChat';
 import MarkdownRenderer from '@/components/MarkdownRenderer';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, isSupabaseConfigured } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 // ─── Quiz Data with Explanations ────────────────────────────────
@@ -388,7 +388,7 @@ const LearningHubPage: React.FC = () => {
         setSkillScores(JSON.parse(savedScores));
         setLearningPath(JSON.parse(savedPath));
         setQuizDone(true);
-      } else if (user) {
+      } else if (user && isSupabaseConfigured) {
         // Attempt fetch from Supabase
         supabase
           .from('learning_paths')
@@ -403,6 +403,9 @@ const LearningHubPage: React.FC = () => {
               setLearningPath(row.recommended_path as any);
               setQuizDone(true);
             }
+          })
+          .catch((err) => {
+            console.warn('Could not fetch learning path from Supabase:', err);
           });
       }
     } catch {
@@ -439,8 +442,8 @@ const LearningHubPage: React.FC = () => {
     localStorage.setItem('algoxai_quiz_scores', JSON.stringify(mapped));
     localStorage.setItem('algoxai_learning_path', JSON.stringify(sorted));
 
-    // Save to Supabase if authenticated
-    if (user) {
+    // Save to Supabase if authenticated and backend is configured
+    if (user && isSupabaseConfigured) {
       try {
         await supabase.from('learning_paths').insert({
           user_id: user.id,

@@ -11,7 +11,7 @@ import { Trophy, Loader2, ArrowLeft, CheckCircle2, AlertCircle } from 'lucide-re
 import { toast } from 'sonner';
 
 const AuthPage: React.FC = () => {
-  const { user, signIn, signUp, loading: authLoading } = useAuth();
+  const { user, signIn, signUp, loading: authLoading, isConfigured } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -115,6 +115,15 @@ const AuthPage: React.FC = () => {
               <TabsTrigger value="signin">Sign In</TabsTrigger>
               <TabsTrigger value="signup">Create Account</TabsTrigger>
             </TabsList>
+
+            {!isConfigured && (
+              <Alert className="mb-4 py-2.5 border-amber-500/30 bg-amber-500/10 text-amber-200">
+                <AlertCircle className="w-4 h-4 text-amber-400" />
+                <AlertDescription className="text-xs">
+                  Supabase backend is currently running in offline demo mode. Set <code>VITE_SUPABASE_URL</code> and <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> in your deployment environment settings to enable live cloud authentication.
+                </AlertDescription>
+              </Alert>
+            )}
 
             {errorMsg && (
               <Alert variant="destructive" className="mb-4 py-2.5">
