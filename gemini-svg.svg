@@ -1,38 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 460" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="70 5 360 360" width="100%" height="100%" role="img" aria-labelledby="title">
+  <title id="title">AlgoXAI Logo</title>
   <defs>
     <!-- Gradient for the fading inner plane of each blade -->
     <linearGradient id="fadeGrad" x1="242" y1="125" x2="155" y2="105" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#9e1aff" stop-opacity="0.95" />
-      <stop offset="55%" stop-color="#c38fff" stop-opacity="0.45" />
-      <stop offset="100%" stop-color="#e5f2ff" stop-opacity="0.0" />
+      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.95" />
+      <stop offset="55%" stop-color="#60A5FA" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#DBEAFE" stop-opacity="0.0" />
     </linearGradient>
 
     <!-- Single Logo Blade (Top) -->
     <g id="blade">
       <!-- Fading inner parallelogram -->
       <polygon points="183,83 242,108 175,123 116,98" fill="url(#fadeGrad)" />
-      <!-- Solid purple outer chevron + inner crescent hook -->
-      <path d="M 183,58 L 288,88 L 242,155 C 244,132 215,122 195,144 C 204,122 224,116 242,122 L 242,108 L 183,83 Z" fill="#9e1aff" />
+      <!-- Solid royal blue outer chevron + inner crescent hook -->
+      <path d="M 183,58 L 288,88 L 242,155 C 244,132 215,122 195,144 C 204,122 224,116 242,122 L 242,108 L 183,83 Z" fill="#3B82F6" />
     </g>
   </defs>
 
-  <!-- Optional Background (Remove if you want a transparent background) -->
-  <rect width="100%" height="100%" fill="#ffffff" />
-
   <!-- 5-Fold Symmetric Logo Mark Centered at (250, 185) -->
   <g>
-    <use href="#blade" />
-    <use href="#blade" transform="rotate(72, 250, 185)" />
-    <use href="#blade" transform="rotate(144, 250, 185)" />
-    <use href="#blade" transform="rotate(216, 250, 185)" />
-    <use href="#blade" transform="rotate(288, 250, 185)" />
-  </g>
-
-  <!-- "ALGOXAI" Text with 3D Extrusion Shadow -->
-  <g font-family="&#39;Montserrat&#39;, &#39;Segoe UI&#39;, &#39;Arial Black&#39;, sans-serif" font-size="60" font-weight="900" text-anchor="middle" letter-spacing="14">
-    <!-- Soft Lavender Bottom Extrusion -->
-    <text x="257" y="427" fill="#d9b8ff">ALGOXAI</text>
-    <!-- Main Solid Purple Text -->
-    <text x="257" y="421" fill="#9e1aff">ALGOXAI</text>
+    <use href="#blade" xlink:href="#blade" />
+    <use href="#blade" xlink:href="#blade" transform="rotate(72, 250, 185)" />
+    <use href="#blade" xlink:href="#blade" transform="rotate(144, 250, 185)" />
+    <use href="#blade" xlink:href="#blade" transform="rotate(216, 250, 185)" />
+    <use href="#blade" xlink:href="#blade" transform="rotate(288, 250, 185)" />
   </g>
 </svg>

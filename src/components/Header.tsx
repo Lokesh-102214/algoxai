@@ -53,7 +53,7 @@ const Header: React.FC = () => {
           <img
             src={logoSrc}
             alt="AlgoXAI"
-            className="w-9 h-9 rounded-lg border border-primary/20 object-cover transition-opacity group-hover:opacity-85"
+            className="w-8 h-8 object-contain transition-transform duration-200 group-hover:scale-105"
           />
           <span className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
             AlgoXAI
@@ -127,7 +127,7 @@ const Header: React.FC = () => {
               <SheetContent side="right" className="w-72 bg-card border-border/60">
                 <SheetHeader className="mb-6 text-left">
                   <SheetTitle className="flex items-center space-x-2 text-lg font-bold">
-                    <img src={logoSrc} alt="" className="w-5 h-5 rounded object-cover" />
+                    <img src={logoSrc} alt="" className="w-6 h-6 object-contain" />
                     <span>AlgoXAI Navigation</span>
                   </SheetTitle>
                 </SheetHeader>

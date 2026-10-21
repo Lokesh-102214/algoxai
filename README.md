@@ -2,7 +2,7 @@
 
 # AlgoXAI
 
-<img src="./gemini-svg.svg" alt="AlgoXAI logo" width="220" />
+<img src="./gemini-svg.svg" alt="AlgoXAI logo" width="120" />
 
 ### Interactive 3D algorithm visualizers backed by pure, tested engines you can reuse in your own tools.
 
