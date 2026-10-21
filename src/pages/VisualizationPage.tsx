@@ -1,14 +1,19 @@
 import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import SortingVisualizer from "../components/visualizers/SortingVisualizer";
 import GraphVisualizer from "../components/visualizers/GraphVisualizer";
 import TowerOfHanoi from "../components/visualizers/TowerOfHanoi";
-import { Play, Pause, RotateCcw, Settings, Eye } from "lucide-react";
+import BST3DVisualizer from "../components/visualizers/BST3DVisualizer";
+import { Eye, Box, Github } from "lucide-react";
 
 const VisualizationPage = () => {
-  const [activeVisualizer, setActiveVisualizer] = useState<"sorting" | "graph" | "hanoi">("sorting");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTool = searchParams.get("tool");
+  const initialTool = requestedTool === "bst3d" || requestedTool === "sorting" || requestedTool === "graph" || requestedTool === "hanoi" ? requestedTool : "sorting";
+  const [activeVisualizer, setActiveVisualizer] = useState<"sorting" | "graph" | "hanoi" | "bst3d">(initialTool);
 
   const visualizers = [
     {
@@ -34,8 +39,21 @@ const VisualizationPage = () => {
       difficulty: "Medium",
       icon: "🗼",
       features: ["Recursive solution", "Move counter", "Animation steps"]
+    },
+    {
+      id: "bst3d" as const,
+      title: "3D Binary Search Tree",
+      description: "Insert, search, and traverse a binary search tree in an interactive 3D scene",
+      difficulty: "Medium",
+      icon: "🌳",
+      features: ["3D orbit controls", "Step-by-step operations", "In-order traversal"]
     }
   ];
+
+  const selectVisualizer = (id: typeof activeVisualizer) => {
+    setActiveVisualizer(id);
+    setSearchParams({ tool: id });
+  };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -54,6 +72,8 @@ const VisualizationPage = () => {
         return <GraphVisualizer />;
       case "hanoi":
         return <TowerOfHanoi />;
+      case "bst3d":
+        return <BST3DVisualizer />;
       default:
         return <SortingVisualizer />;
     }
@@ -68,13 +88,17 @@ const VisualizationPage = () => {
           Algorithm Visualizations
         </h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
-          Interactive visualizations to help you understand how algorithms work step by step.
-          Perfect for learning and teaching algorithmic concepts.
+          An open-source lab for manipulating algorithm state—not just watching it move.
+          Start with a scene, control the operation, then use the explanation to understand every decision.
         </p>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1"><Box className="h-3.5 w-3.5 text-primary" /> 3D scenes are interactive</span>
+          <a className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 hover:text-foreground" href="https://github.com/Lokesh-102214/algoxai" target="_blank" rel="noreferrer"><Github className="h-3.5 w-3.5" /> Contribute a visualizer</a>
+        </div>
       </div>
 
       {/* Visualizer Selection */}
-      <div className="grid md:grid-cols-3 gap-4 mb-8">
+      <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
         {visualizers.map((viz) => (
           <Card 
             key={viz.id}
@@ -83,16 +107,16 @@ const VisualizationPage = () => {
                 ? 'ring-2 ring-primary bg-primary/5' 
                 : 'hover:bg-muted/50'
             }`}
-            onClick={() => setActiveVisualizer(viz.id)}
+            onClick={() => selectVisualizer(viz.id)}
           >
             <div className="flex items-start justify-between mb-3">
               <div className="text-3xl">{viz.icon}</div>
-              <Badge className={getDifficultyColor(viz.difficulty)}>
+              <Badge className={viz.id === "bst3d" ? "bg-primary text-primary-foreground" : getDifficultyColor(viz.difficulty)}>
                 {viz.difficulty}
               </Badge>
             </div>
             
-            <h3 className="text-lg font-semibold mb-2">{viz.title}</h3>
+            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">{viz.title} {viz.id === "bst3d" && <span className="text-[10px] rounded-full bg-primary/10 px-2 py-0.5 font-semibold uppercase tracking-wide text-primary">3D</span>}</h3>
             <p className="text-sm text-muted-foreground mb-3">{viz.description}</p>
             
             <div className="space-y-1">
@@ -153,6 +177,14 @@ const VisualizationPage = () => {
                 <p>• Click "Solve" to watch the recursive solution</p>
                 <p>• Observe how the algorithm moves disks optimally</p>
                 <p>• The move counter shows the minimum steps needed</p>
+              </>
+            )}
+            {activeVisualizer === "bst3d" && (
+              <>
+                <p>• Drag the 3D scene to orbit and use the scroll wheel to zoom</p>
+                <p>• Insert a whole number to see its comparison path and final position</p>
+                <p>• Search for a value or run in-order traversal to visit nodes in sorted order</p>
+                <p>• Purple nodes are unvisited, green nodes were visited, and gold is active</p>
               </>
             )}
           </div>

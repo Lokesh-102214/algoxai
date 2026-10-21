@@ -16,6 +16,11 @@ import {
   Code2,
   ArrowRight,
   ShieldCheck,
+  Github,
+  Box,
+  MousePointer2,
+  Workflow,
+  BookOpen,
 } from "lucide-react";
 
 const HomePage = () => {
@@ -84,28 +89,28 @@ const HomePage = () => {
 
   const platformPillars = [
     {
-      icon: Bot,
-      title: "Specialized AI Agents",
-      description: "Dedicated agents for concept explanation, line-by-line code review, and rubber-duck debugging.",
-      badge: "Multi-Agent AI",
+      icon: Box,
+      title: "3D algorithm labs",
+      description: "Rotate, zoom, and manipulate data structures so relationships that are hard to see in 2D become intuitive.",
+      badge: "Explore spatially",
     },
     {
-      icon: Play,
-      title: "Interactive Visualizers",
-      description: "Step through sorting algorithms, canvas graph traversals, and recursive Tower of Hanoi puzzles.",
-      badge: "Visual Learning",
+      icon: MousePointer2,
+      title: "Control every step",
+      description: "Insert data, replay operations, and inspect each comparison instead of passively watching an animation.",
+      badge: "Learn by doing",
     },
     {
-      icon: GraduationCap,
-      title: "Adaptive Learning Hub",
-      description: "A diagnostic assessment identifies your weak points and crafts an ordered, prerequisite-aware roadmap.",
-      badge: "Personalized",
+      icon: Workflow,
+      title: "Built for explanations",
+      description: "Every visualizer pairs the scene with the operation, state, and complexity that explain what changed and why.",
+      badge: "See the why",
     },
     {
-      icon: Code2,
-      title: "Rating-Aware Practice",
-      description: "Curated problem recommendations designed to break through performance plateaus.",
-      badge: "Targeted Mastery",
+      icon: Github,
+      title: "Open source by default",
+      description: "Use it freely, inspect the algorithm engines, and help grow the catalogue with a visualizer of your own.",
+      badge: "MIT licensed",
     },
   ];
 
@@ -115,32 +120,32 @@ const HomePage = () => {
       <section className="relative py-20 px-4 border-b border-border/40">
         <div className="container mx-auto text-center max-w-4xl relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-medium mb-6">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            <span>AI-Native Algorithm Education</span>
+            <Box className="w-3.5 h-3.5" />
+            <span>Open-source 3D algorithm lab</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
-            Master Algorithms with{" "}
-            <span className="text-primary">AI-Powered Learning</span>
+            Don&apos;t just read algorithms. <span className="text-primary">Explore them.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            AlgoXAI identifies your weaknesses, teaches concepts with specialized AI tutoring agents,
-            and recommends practice at your level — so every study session makes you measurably better.
+            AlgoXAI is a hands-on visualizer for the algorithms and data structures that are easiest to misunderstand.
+            Manipulate the state, follow each decision, and build intuition that static diagrams cannot give you.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-16">
-            <Link to="/auth">
+            <Link to="/visualizations?tool=bst3d">
               <Button size="lg" className="px-8 text-base shadow-sm">
-                Get Started Free
+                Try the 3D BST
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
-            <Link to="/product">
+            <a href="https://github.com/Lokesh-102214/algoxai" target="_blank" rel="noreferrer">
               <Button size="lg" variant="outline" className="px-8 text-base border-border/80">
-                Explore the Platform
+                <Github className="w-4 h-4 mr-2" />
+                View the source
               </Button>
-            </Link>
+            </a>
           </div>
 
           {/* Genuine Platform Feature Highlights (replaces fake stats) */}
@@ -163,16 +168,39 @@ const HomePage = () => {
         </div>
       </section>
 
+      <section className="py-14 px-4 bg-muted/20 border-b border-border/40">
+        <div className="container mx-auto max-w-5xl grid gap-8 md:grid-cols-[1.1fr_.9fr] items-center">
+          <div>
+            <div className="flex items-center gap-2 text-primary text-sm font-semibold mb-3">
+              <Github className="w-4 h-4" />
+              FOR LEARNERS, EDUCATORS, AND CONTRIBUTORS
+            </div>
+            <h2 className="text-3xl font-bold tracking-tight mb-3">A visualizer that earns a place in your workflow.</h2>
+            <p className="text-muted-foreground leading-relaxed">
+              Start without an account, share a direct link to a concept, use the pure algorithm engines in your own project,
+              or contribute a new scene. The learning experience stays useful whether you are studying alone, teaching a class, or building tools.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {["No account to explore", "Interactive, not autoplay-only", "Accessible source and algorithm engines", "AI guidance when you need it"].map((benefit) => (
+              <Card key={benefit} className="p-4 text-sm font-medium flex items-center gap-3">
+                <ShieldCheck className="w-4 h-4 shrink-0 text-primary" />
+                {benefit}
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Topics Grid */}
       <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-12 max-w-2xl mx-auto">
             <h2 className="text-3xl font-bold tracking-tight text-foreground mb-3">
-              Algorithm Learning Tracks
+              Explore by concept
             </h2>
             <p className="text-muted-foreground text-base">
-              Deepen your mastery of fundamental algorithms. Each track includes theoretical concepts,
-              production C++ implementations, and interactive tools.
+              Build a mental model with an interactive scene first, then deepen it with explanations, code, and practice.
             </p>
           </div>
 
@@ -187,21 +215,21 @@ const HomePage = () => {
       {/* Quick Access Section */}
       <section className="py-14 px-4 bg-muted/20 border-t border-border/40">
         <div className="container mx-auto text-center max-w-3xl">
-          <h3 className="text-2xl font-bold mb-3 text-foreground">Start Learning Today</h3>
+          <h3 className="text-2xl font-bold mb-3 text-foreground">Pick a scene. Change the state. Understand the result.</h3>
           <p className="text-muted-foreground text-sm mb-8">
-            Take a diagnostic quiz to assess your skills or jump directly into interactive algorithm visualizers.
+            The visualizer playground is the fastest way in. The learning hub and AI tutor are there when you want more structure.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/learning-hub">
-              <Button variant="default" className="gap-2">
-                <GraduationCap className="w-4 h-4" />
-                Take Skill Diagnostic
-              </Button>
-            </Link>
             <Link to="/visualizations">
-              <Button variant="outline" className="gap-2">
+              <Button variant="default" className="gap-2">
                 <Play className="w-4 h-4" />
                 Open Visualizer Playground
+              </Button>
+            </Link>
+            <Link to="/learning-hub">
+              <Button variant="outline" className="gap-2">
+                <BookOpen className="w-4 h-4" />
+                Take Skill Diagnostic
               </Button>
             </Link>
             <Link to="/ai">

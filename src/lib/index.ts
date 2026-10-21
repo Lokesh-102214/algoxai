@@ -7,6 +7,7 @@
 export { default as SortingVisualizer } from '@/components/visualizers/SortingVisualizer';
 export { default as GraphVisualizer } from '@/components/visualizers/GraphVisualizer';
 export { default as TowerOfHanoi } from '@/components/visualizers/TowerOfHanoi';
+export { default as BST3DVisualizer } from '@/components/visualizers/BST3DVisualizer';
 
 // Developer Experience & AI Components
 export { default as CodeEditor } from '@/components/CodeEditor';
@@ -41,3 +42,12 @@ export {
   validateHanoiSequence,
 } from './algorithms/hanoi';
 export type { HanoiMove } from './algorithms/hanoi';
+
+export {
+  bstInsertSteps,
+  bstSearchSteps,
+  bstInOrderSteps,
+  buildBSTFromArray,
+  bstHeight,
+} from './algorithms/trees';
+export type { BSTNode, BSTState, BSTStep, BSTStepType } from './algorithms/trees';
