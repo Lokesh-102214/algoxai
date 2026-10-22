@@ -21,6 +21,9 @@ import {
   MousePointer2,
   Workflow,
   BookOpen,
+  Share2,
+  Download,
+  Compass,
 } from "lucide-react";
 
 const HomePage = () => {
@@ -90,27 +93,27 @@ const HomePage = () => {
   const platformPillars = [
     {
       icon: Box,
-      title: "3D algorithm labs",
-      description: "Rotate, zoom, and manipulate data structures so relationships that are hard to see in 2D become intuitive.",
-      badge: "Explore spatially",
+      title: "3D Spatial Labs",
+      description: "Rotate, zoom, and explore data structures spatially so depth, tree balancing, and relationships become intuitive.",
+      badge: "Spatial 3D",
     },
     {
-      icon: MousePointer2,
-      title: "Control every step",
-      description: "Insert data, replay operations, and inspect each comparison instead of passively watching an animation.",
-      badge: "Learn by doing",
+      icon: Code2,
+      title: "Observable Engines",
+      description: "Pure TypeScript algorithm engines decoupled from the UI. Zero dependencies, fully tested, and reusable in CLIs or Node.",
+      badge: "Zero-Dep API",
     },
     {
-      icon: Workflow,
-      title: "Built for explanations",
-      description: "Every visualizer pairs the scene with the operation, state, and complexity that explain what changed and why.",
-      badge: "See the why",
+      icon: Share2,
+      title: "Developer Permalinks",
+      description: "Encode custom inputs and exact steps into URLs. Share reproducible algorithm states in PR reviews and team docs.",
+      badge: "PR-Friendly",
     },
     {
-      icon: Github,
-      title: "Open source by default",
-      description: "Use it freely, inspect the algorithm engines, and help grow the catalogue with a visualizer of your own.",
-      badge: "MIT licensed",
+      icon: Download,
+      title: "JSON Trace Export",
+      description: "Download immutable step arrays to generate reproducible test fixtures or ground LLM prompts with exact execution traces.",
+      badge: "LLM Ready",
     },
   ];
 
@@ -121,34 +124,35 @@ const HomePage = () => {
         <div className="container mx-auto text-center max-w-4xl relative z-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/5 text-primary text-xs font-medium mb-6">
             <Box className="w-3.5 h-3.5" />
-            <span>Open-source 3D algorithm lab</span>
+            <span>Open-Source Observable Algorithm Infrastructure</span>
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-foreground mb-6 leading-tight">
-            Don&apos;t just read algorithms. <span className="text-primary">Explore them.</span>
+            See algorithms think. <br className="hidden sm:inline" />
+            <span className="text-primary">From code to intuition.</span>
           </h1>
 
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
-            AlgoXAI is a hands-on visualizer for the algorithms and data structures that are easiest to misunderstand.
-            Manipulate the state, follow each decision, and build intuition that static diagrams cannot give you.
+            AlgoXAI turns abstract data structures into observable, testable, and embeddable developer tools.
+            Test custom edge-case inputs in 3D and 2D, export JSON execution traces, and share live states across your team.
           </p>
 
           <div className="flex flex-wrap justify-center gap-4 mb-16">
-            <Link to="/visualizations?tool=bst3d">
+            <Link to="/visualizations">
               <Button size="lg" className="px-8 text-base shadow-sm">
-                Try the 3D BST
+                Open Visualizer Lab
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
             </Link>
             <a href="https://github.com/Lokesh-102214/algoxai" target="_blank" rel="noreferrer">
               <Button size="lg" variant="outline" className="px-8 text-base border-border/80">
                 <Github className="w-4 h-4 mr-2" />
-                View the source
+                Star on GitHub
               </Button>
             </a>
           </div>
 
-          {/* Genuine Platform Feature Highlights (replaces fake stats) */}
+          {/* Platform Feature Highlights */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
             {platformPillars.map(({ icon: Icon, title, description, badge }) => (
               <Card key={title} className="p-5 border-border/60 bg-card/60 hover:bg-card transition-colors">
@@ -160,7 +164,7 @@ const HomePage = () => {
                     {badge}
                   </span>
                 </div>
-                <h3 className="font-semibold text-foreground text-sm mb-1">{title}</h3>
+                <h3 className="text-base font-semibold text-foreground mb-1.5">{title}</h3>
                 <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
               </Card>
             ))}
@@ -168,43 +172,25 @@ const HomePage = () => {
         </div>
       </section>
 
-      <section className="py-14 px-4 bg-muted/20 border-b border-border/40">
-        <div className="container mx-auto max-w-5xl grid gap-8 md:grid-cols-[1.1fr_.9fr] items-center">
-          <div>
-            <div className="flex items-center gap-2 text-primary text-sm font-semibold mb-3">
-              <Github className="w-4 h-4" />
-              FOR LEARNERS, EDUCATORS, AND CONTRIBUTORS
-            </div>
-            <h2 className="text-3xl font-bold tracking-tight mb-3">A visualizer that earns a place in your workflow.</h2>
-            <p className="text-muted-foreground leading-relaxed">
-              Start without an account, share a direct link to a concept, use the pure algorithm engines in your own project,
-              or contribute a new scene. The learning experience stays useful whether you are studying alone, teaching a class, or building tools.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {["No account to explore", "Interactive, not autoplay-only", "Accessible source and algorithm engines", "AI guidance when you need it"].map((benefit) => (
-              <Card key={benefit} className="p-4 text-sm font-medium flex items-center gap-3">
-                <ShieldCheck className="w-4 h-4 shrink-0 text-primary" />
-                {benefit}
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* Topics Grid */}
-      <section className="py-20 px-4">
+      <section className="py-16 px-4">
         <div className="container mx-auto">
-          <div className="text-center mb-12 max-w-2xl mx-auto">
-            <h2 className="text-3xl font-bold tracking-tight text-foreground mb-3">
-              Explore by concept
-            </h2>
-            <p className="text-muted-foreground text-base">
-              Build a mental model with an interactive scene first, then deepen it with explanations, code, and practice.
-            </p>
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
+            <div>
+              <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-2">
+                Core Algorithm Modules
+              </h2>
+              <p className="text-muted-foreground text-sm max-w-xl">
+                Systematic learning paths curated for competitive programming and systems engineering.
+              </p>
+            </div>
+            <Link to="/learning-hub" className="mt-4 md:mt-0 text-sm font-medium text-primary hover:underline flex items-center">
+              View all modules
+              <ArrowRight className="w-4 h-4 ml-1" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {cpTopics.map((topic) => (
               <TopicCard key={topic.slug} {...topic} />
             ))}
@@ -212,30 +198,31 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Quick Access Section */}
-      <section className="py-14 px-4 bg-muted/20 border-t border-border/40">
-        <div className="container mx-auto text-center max-w-3xl">
-          <h3 className="text-2xl font-bold mb-3 text-foreground">Pick a scene. Change the state. Understand the result.</h3>
-          <p className="text-muted-foreground text-sm mb-8">
-            The visualizer playground is the fastest way in. The learning hub and AI tutor are there when you want more structure.
+      {/* Open Source Adoption / Infrastructure Banner */}
+      <section className="py-16 px-4 border-t border-border/40 bg-card/30">
+        <div className="container mx-auto max-w-3xl text-center">
+          <div className="w-12 h-12 rounded-xl bg-primary/10 text-primary flex items-center justify-center mx-auto mb-4">
+            <Code2 className="w-6 h-6" />
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-3">
+            Reusable as an npm Component Library
+          </h2>
+          <p className="text-muted-foreground text-sm mb-6 leading-relaxed">
+            The visualizers and algorithm engines are built to be embedded into your own docs, wikis, or internal tools.
+            Install via npm or fork the repository to build your own custom visualizers.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/visualizations">
-              <Button variant="default" className="gap-2">
-                <Play className="w-4 h-4" />
-                Open Visualizer Playground
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-950 border border-border/80 font-mono text-xs text-slate-300 mb-8">
+            <span>npm install algoxai</span>
+          </div>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link to="/visualizations?tool=pathfinding">
+              <Button variant="secondary" size="sm" className="gap-2">
+                <Compass className="w-4 h-4" /> Try A* Pathfinding
               </Button>
             </Link>
-            <Link to="/learning-hub">
-              <Button variant="outline" className="gap-2">
-                <BookOpen className="w-4 h-4" />
-                Take Skill Diagnostic
-              </Button>
-            </Link>
-            <Link to="/ai">
-              <Button variant="outline" className="gap-2">
-                <Bot className="w-4 h-4" />
-                Consult AI Assistant
+            <Link to="/visualizations?tool=bst3d">
+              <Button variant="secondary" size="sm" className="gap-2">
+                <Box className="w-4 h-4" /> Try 3D BST
               </Button>
             </Link>
           </div>

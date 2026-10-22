@@ -1,47 +1,98 @@
 # Contributing to AlgoXAI
 
-Thank you for helping make difficult algorithms easier to understand. We value clarity, correctness, and accessible interaction over decorative animation.
+Thank you for contributing to AlgoXAI. We are building the **open-source observable algorithm infrastructure** for developers, engineering teams, and technical educators.
 
-## Start here
+Please review our [Strategic Product Reframe (docs/strategy.md)](docs/strategy.md) and [Architecture Guide (ARCHITECTURE.md)](ARCHITECTURE.md) to understand our goals and design principles.
 
-1. Check the issue tracker or open a short proposal for a new visualizer.
-2. Fork the repository and create a branch: `git switch -c feat/your-visualizer`.
-3. Install dependencies with `npm install`.
-4. Run `npm run dev` and make one focused change.
+---
 
-## Adding a visualizer
+## High-Impact Contribution Priorities
 
-Every visualizer should have two layers:
+We organize contributions by market impact according to our product roadmap:
 
-1. A pure, side-effect-free engine in `src/lib/algorithms/` that returns state snapshots or operation steps.
-2. A React renderer in `src/components/visualizers/` that makes those steps understandable and controllable.
+### 1. High Impact (Solves the biggest developer pain points)
+- **New Pure Algorithm Engines & Visualizers:**
+  - Merge Sort & Quick Sort divide-and-conquer steps
+  - Min/Max Heap & Priority Queue (task scheduling)
+  - Trie (prefix tree / autocomplete indexing)
+  - Union-Find / Disjoint Sets (Kruskal's MST)
+  - Red-Black Tree / AVL tree rebalancing
+- **Shareable State & Permalinks:** Expand query parameter serialization to custom graph structures.
+- **Trace Export & Import:** Add copy/paste trace import so developers can replay saved execution traces.
 
-Before submitting a pull request, make sure the scene:
+### 2. Medium Impact (Ecosystem & Platform integration)
+- **MDX / Docusaurus / Astro Component:** Create an inline `<AlgoXAI algo="..." />` embed for developer documentation sites.
+- **Web Component Target:** Compile `<algoxai-visualizer>` custom elements for vanilla HTML/Confluence embedding.
+- **LLM Prompt Exporter:** Format step traces as structured prompt templates for AI code review tools.
 
-- makes a specific algorithmic decision easier to understand;
-- offers useful interaction within a few seconds of opening it;
-- explains the active state in plain language;
-- has keyboard-friendly controls or a non-drag alternative where drag is used;
-- includes engine tests for normal and edge cases; and
-- is registered in `src/pages/VisualizationPage.tsx` with a shareable `?tool=` value.
+---
 
-## Verification
+## How to Add a New Algorithm in Under 1 Hour
 
-```bash
-npm run typecheck
-npm test
-npm run build
+AlgoXAI enforces a strict two-layer architecture: **Engine First, Presentation Decoupled**.
+
+### Step 1: Write the Pure Algorithm Engine (`src/lib/algorithms/`)
+
+Create `src/lib/algorithms/<your-algorithm>.ts`. This file must be 100% pure TypeScript with **zero React, Three.js, or DOM dependencies**:
+
+```ts
+export interface Step {
+  type: string;
+  description: string;
+  snapshot: any;
+}
+
+export function myAlgorithmSteps(input: any): Step[] {
+  const steps: Step[] = [];
+  // execute algorithm logic and push immutable step snapshots
+  return steps;
+}
 ```
 
-## Pull requests
+### Step 2: Write Unit Tests (`src/lib/algorithms/__tests__/`)
 
-Keep pull requests focused. Describe the learner problem, the interaction model, and the evidence that the algorithm trace is correct. Screenshots or a short recording are welcome for visual changes.
+Create `src/lib/algorithms/__tests__/<your-algorithm>.test.ts`. Test:
+- Normal expected operations
+- Edge cases (empty array, single node, already sorted, cyclic graph)
+- Step count and accuracy of step descriptions
 
-## Good first contributions
+Run:
+```bash
+npm test src/lib/algorithms/__tests__/<your-algorithm>.test.ts
+```
 
-- Add keyboard controls to an existing scene.
-- Improve a visualizer’s text explanation or empty state.
-- Add a test for an untested edge case.
-- Create a reduced-motion alternative for an animation.
+### Step 3: Create the Visualizer Component (`src/components/visualizers/`)
 
-Report bugs and accessibility gaps through the issue templates.
+Create `src/components/visualizers/<YourAlgorithmVisualizer>.tsx`:
+- Render the step snapshots using 2D Canvas, HTML/Tailwind, or Three.js / React Three Fiber.
+- Add playback controls (Play, Pause, Step Forward, Speed slider, Reset).
+- Support custom user inputs and a "Share Link" button.
+- Support "Export Trace (JSON)".
+
+### Step 4: Register in `src/pages/VisualizationPage.tsx` & `src/lib/index.ts`
+
+- Add your visualizer to the `visualizers` list in `VisualizationPage.tsx` with a unique `id`.
+- Export your engine functions and component in `src/lib/index.ts`.
+
+---
+
+## Verification Before Submitting a PR
+
+Always run the full verification pipeline before opening a PR:
+
+```bash
+npm run typecheck    # TypeScript compiler check
+npm test             # All unit and component tests
+npm run build        # Production web application bundle
+npm run build:lib    # Dual ESM & UMD library bundle
+```
+
+All PRs must maintain 100% test pass rate with zero type errors.
+
+---
+
+## Pull Request Guidelines
+
+1. **Title:** Use Conventional Commits (e.g., `feat(engine): add merge sort step generator`, `fix(visualizer): correct A* wall toggle`).
+2. **Description:** Describe what algorithmic decision is being made observable, how custom inputs are validated, and link any related issues.
+3. **Documentation:** Update `README.md` if adding a new public algorithm engine or visualizer.

@@ -1,5 +1,5 @@
 /**
- * AlgoXAI: The AI-Native Algorithm & Competitive Programming Component Library
+ * AlgoXAI: The Observable Algorithm Engine & Component Library
  * Reusable visualizers, interactive code runners, and mathematical algorithm engines.
  */
 
@@ -8,6 +8,7 @@ export { default as SortingVisualizer } from '@/components/visualizers/SortingVi
 export { default as GraphVisualizer } from '@/components/visualizers/GraphVisualizer';
 export { default as TowerOfHanoi } from '@/components/visualizers/TowerOfHanoi';
 export { default as BST3DVisualizer } from '@/components/visualizers/BST3DVisualizer';
+export { default as PathfindingVisualizer } from '@/components/visualizers/PathfindingVisualizer';
 
 // Developer Experience & AI Components
 export { default as CodeEditor } from '@/components/CodeEditor';
@@ -51,3 +52,20 @@ export {
   bstHeight,
 } from './algorithms/trees';
 export type { BSTNode, BSTState, BSTStep, BSTStepType } from './algorithms/trees';
+
+export {
+  createGrid,
+  manhattanDistance,
+  reconstructPath,
+  getNeighbors,
+  dijkstraGrid,
+  aStarGrid,
+} from './algorithms/pathfinding';
+export type {
+  GridCoord,
+  GridNode,
+  GridMap,
+  PathfindingStep,
+  PathfindingStepType,
+  PathfindingResult,
+} from './algorithms/pathfinding';

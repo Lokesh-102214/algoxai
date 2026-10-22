@@ -1,81 +1,106 @@
 import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import SortingVisualizer from "../components/visualizers/SortingVisualizer";
 import GraphVisualizer from "../components/visualizers/GraphVisualizer";
 import TowerOfHanoi from "../components/visualizers/TowerOfHanoi";
 import BST3DVisualizer from "../components/visualizers/BST3DVisualizer";
-import { Eye, Box, Github } from "lucide-react";
+import PathfindingVisualizer from "../components/visualizers/PathfindingVisualizer";
+import { Eye, Box, Github, Layers, Compass, Code2 } from "lucide-react";
+
+type VisualizerTool = "bst3d" | "pathfinding" | "sorting" | "graph" | "hanoi";
 
 const VisualizationPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const requestedTool = searchParams.get("tool");
-  const initialTool = requestedTool === "bst3d" || requestedTool === "sorting" || requestedTool === "graph" || requestedTool === "hanoi" ? requestedTool : "sorting";
-  const [activeVisualizer, setActiveVisualizer] = useState<"sorting" | "graph" | "hanoi" | "bst3d">(initialTool);
+  const requestedTool = searchParams.get("tool") as VisualizerTool | null;
+  const initialTool: VisualizerTool =
+    requestedTool && ["bst3d", "pathfinding", "sorting", "graph", "hanoi"].includes(requestedTool)
+      ? requestedTool
+      : "bst3d";
+
+  const [activeVisualizer, setActiveVisualizer] = useState<VisualizerTool>(initialTool);
 
   const visualizers = [
     {
+      id: "bst3d" as const,
+      title: "3D Binary Search Tree",
+      description: "Insert, search, and traverse spatial trees in interactive 3D with customizable input & trace export",
+      difficulty: "Medium",
+      icon: "🌳",
+      badge: "3D Spatial",
+      features: ["3D orbit & zoom", "Custom array input", "JSON trace export"],
+    },
+    {
+      id: "pathfinding" as const,
+      title: "Pathfinding (A* & Dijkstra)",
+      description: "Solve shortest paths across obstacle grids with Manhattan heuristics and step-by-step exploration",
+      difficulty: "Hard",
+      icon: "🧭",
+      badge: "New Engine",
+      features: ["Interactive walls", "A* & Dijkstra engines", "Heuristic comparison"],
+    },
+    {
       id: "sorting" as const,
       title: "Sorting Algorithms",
-      description: "Visualize bubble sort, selection sort, and insertion sort in action",
+      description: "Compare Bubble, Selection, and Insertion sorts with custom arrays, speed controls, and traces",
       difficulty: "Easy",
       icon: "📊",
-      features: ["Multiple algorithms", "Speed control", "Array size control"]
+      badge: "Replayable",
+      features: ["Custom array inputs", "Real-time step logs", "Trace export"],
     },
     {
       id: "graph" as const,
       title: "Graph Traversal",
-      description: "Watch BFS and DFS algorithms explore graph structures",
-      difficulty: "Medium", 
+      description: "Watch BFS and DFS algorithms explore cyclic graph structures with path reconstruction",
+      difficulty: "Medium",
       icon: "🌐",
-      features: ["BFS/DFS visualization", "Interactive nodes", "Path highlighting"]
+      badge: "Canvas 2D",
+      features: ["BFS/DFS engines", "Interactive nodes", "Shortest path resolution"],
     },
     {
       id: "hanoi" as const,
       title: "Tower of Hanoi",
-      description: "Classic recursive problem visualization with move counting",
+      description: "Classic recursive divide-and-conquer problem with optimal move count calculations",
       difficulty: "Medium",
       icon: "🗼",
-      features: ["Recursive solution", "Move counter", "Animation steps"]
+      badge: "Recursive",
+      features: ["Optimal 2ⁿ - 1 moves", "Step playback", "Disk count controls"],
     },
-    {
-      id: "bst3d" as const,
-      title: "3D Binary Search Tree",
-      description: "Insert, search, and traverse a binary search tree in an interactive 3D scene",
-      difficulty: "Medium",
-      icon: "🌳",
-      features: ["3D orbit controls", "Step-by-step operations", "In-order traversal"]
-    }
   ];
 
-  const selectVisualizer = (id: typeof activeVisualizer) => {
+  const selectVisualizer = (id: VisualizerTool) => {
     setActiveVisualizer(id);
     setSearchParams({ tool: id });
   };
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Easy": return "cp-difficulty-easy";
-      case "Medium": return "cp-difficulty-medium"; 
-      case "Hard": return "cp-difficulty-hard";
-      default: return "cp-difficulty-easy";
+      case "Easy":
+        return "cp-difficulty-easy";
+      case "Medium":
+        return "cp-difficulty-medium";
+      case "Hard":
+        return "cp-difficulty-hard";
+      default:
+        return "cp-difficulty-easy";
     }
   };
 
   const renderVisualizer = () => {
     switch (activeVisualizer) {
+      case "bst3d":
+        return <BST3DVisualizer />;
+      case "pathfinding":
+        return <PathfindingVisualizer />;
       case "sorting":
         return <SortingVisualizer />;
       case "graph":
         return <GraphVisualizer />;
       case "hanoi":
         return <TowerOfHanoi />;
-      case "bst3d":
-        return <BST3DVisualizer />;
       default:
-        return <SortingVisualizer />;
+        return <BST3DVisualizer />;
     }
   };
 
@@ -83,46 +108,61 @@ const VisualizationPage = () => {
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-4 flex items-center justify-center">
+        <h1 className="text-3xl font-bold mb-3 flex items-center justify-center">
           <Eye className="w-8 h-8 mr-3 text-primary" />
-          Algorithm Visualizations
+          Observable Algorithm Workbench
         </h1>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
-          An open-source lab for manipulating algorithm state—not just watching it move.
-          Start with a scene, control the operation, then use the explanation to understand every decision.
+        <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+          Interactive, observable data structure visualizers backed by pure TypeScript algorithm engines.
+          Inspect state transitions, test custom edge-case inputs, export JSON execution traces, and share live states.
         </p>
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1"><Box className="h-3.5 w-3.5 text-primary" /> 3D scenes are interactive</span>
-          <a className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 hover:text-foreground" href="https://github.com/Lokesh-102214/algoxai" target="_blank" rel="noreferrer"><Github className="h-3.5 w-3.5" /> Contribute a visualizer</a>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 bg-card">
+            <Box className="h-3.5 w-3.5 text-primary" /> 3D Spatial Renders
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 bg-card">
+            <Compass className="h-3.5 w-3.5 text-emerald-500" /> A* & Dijkstra Grid Engine
+          </span>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 bg-card">
+            <Code2 className="h-3.5 w-3.5 text-amber-500" /> Zero-Dep Algorithm Engines
+          </span>
+          <a
+            className="inline-flex items-center gap-1.5 rounded-full border border-border px-3 py-1 hover:text-foreground transition-colors bg-card"
+            href="https://github.com/Lokesh-102214/algoxai"
+            target="_blank"
+            rel="noreferrer"
+          >
+            <Github className="h-3.5 w-3.5" /> Open Source on GitHub
+          </a>
         </div>
       </div>
 
-      {/* Visualizer Selection */}
-      <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4 mb-8">
+      {/* Visualizer Selection Grid */}
+      <div className="grid md:grid-cols-5 gap-3 mb-8">
         {visualizers.map((viz) => (
-          <Card 
+          <Card
             key={viz.id}
-            className={`p-4 cursor-pointer transition-all hover:shadow-lg ${
-              activeVisualizer === viz.id 
-                ? 'ring-2 ring-primary bg-primary/5' 
-                : 'hover:bg-muted/50'
+            className={`p-3.5 cursor-pointer transition-all hover:shadow-md ${
+              activeVisualizer === viz.id
+                ? "ring-2 ring-primary bg-primary/5 border-primary/40"
+                : "hover:bg-muted/40 bg-card border-border/70"
             }`}
             onClick={() => selectVisualizer(viz.id)}
           >
-            <div className="flex items-start justify-between mb-3">
-              <div className="text-3xl">{viz.icon}</div>
-              <Badge className={viz.id === "bst3d" ? "bg-primary text-primary-foreground" : getDifficultyColor(viz.difficulty)}>
-                {viz.difficulty}
+            <div className="flex items-start justify-between mb-2">
+              <div className="text-2xl">{viz.icon}</div>
+              <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${getDifficultyColor(viz.difficulty)}`}>
+                {viz.badge}
               </Badge>
             </div>
-            
-            <h3 className="text-lg font-semibold mb-2 flex items-center gap-2">{viz.title} {viz.id === "bst3d" && <span className="text-[10px] rounded-full bg-primary/10 px-2 py-0.5 font-semibold uppercase tracking-wide text-primary">3D</span>}</h3>
-            <p className="text-sm text-muted-foreground mb-3">{viz.description}</p>
-            
-            <div className="space-y-1">
+
+            <h3 className="text-sm font-semibold mb-1 text-foreground truncate">{viz.title}</h3>
+            <p className="text-xs text-muted-foreground mb-2 line-clamp-2">{viz.description}</p>
+
+            <div className="space-y-0.5">
               {viz.features.map((feature, index) => (
-                <div key={index} className="text-xs text-muted-foreground flex items-center">
-                  <div className="w-1 h-1 bg-primary rounded-full mr-2" />
+                <div key={index} className="text-[11px] text-muted-foreground flex items-center">
+                  <div className="w-1 h-1 bg-primary rounded-full mr-1.5" />
                   {feature}
                 </div>
               ))}
@@ -131,19 +171,24 @@ const VisualizationPage = () => {
         ))}
       </div>
 
-      {/* Active Visualizer */}
-      <Card className="p-6">
+      {/* Active Visualizer Panel */}
+      <Card className="p-6 bg-card border-border/70">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold">
-            {visualizers.find(v => v.id === activeVisualizer)?.title}
-          </h2>
-          
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="text-xs">
-              Interactive
+          <div className="flex items-center gap-2">
+            <h2 className="text-xl font-semibold text-foreground">
+              {visualizers.find((v) => v.id === activeVisualizer)?.title}
+            </h2>
+            <Badge className={getDifficultyColor(visualizers.find((v) => v.id === activeVisualizer)?.difficulty || "Easy")}>
+              {visualizers.find((v) => v.id === activeVisualizer)?.difficulty}
             </Badge>
-            <Badge variant="outline" className="text-xs">
-              Educational
+          </div>
+
+          <div className="flex items-center space-x-2">
+            <Badge variant="outline" className="text-xs border-primary/30 text-primary">
+              Observable Engine
+            </Badge>
+            <Badge variant="outline" className="text-xs border-border">
+              Permalinks Enabled
             </Badge>
           </div>
         </div>
@@ -151,60 +196,20 @@ const VisualizationPage = () => {
         {/* Visualizer Component */}
         {renderVisualizer()}
 
-        {/* Instructions */}
-        <div className="mt-6 p-4 bg-muted rounded-lg">
-          <h4 className="font-semibold mb-2">How to use:</h4>
-          <div className="text-sm text-muted-foreground space-y-1">
-            {activeVisualizer === "sorting" && (
-              <>
-                <p>• Click "Generate Array" to create a new random array</p>
-                <p>• Select your preferred sorting algorithm</p>
-                <p>• Adjust speed and array size with the controls</p>
-                <p>• Click "Start Sort" to begin the visualization</p>
-              </>
-            )}
-            {activeVisualizer === "graph" && (
-              <>
-                <p>• Click nodes to set start and end points</p>
-                <p>• Choose between BFS and DFS algorithms</p>
-                <p>• Watch as the algorithm explores the graph</p>
-                <p>• Reset to try different paths</p>
-              </>
-            )}
-            {activeVisualizer === "hanoi" && (
-              <>
-                <p>• Choose the number of disks (3-8 recommended)</p>
-                <p>• Click "Solve" to watch the recursive solution</p>
-                <p>• Observe how the algorithm moves disks optimally</p>
-                <p>• The move counter shows the minimum steps needed</p>
-              </>
-            )}
-            {activeVisualizer === "bst3d" && (
-              <>
-                <p>• Drag the 3D scene to orbit and use the scroll wheel to zoom</p>
-                <p>• Insert a whole number to see its comparison path and final position</p>
-                <p>• Search for a value or run in-order traversal to visit nodes in sorted order</p>
-                <p>• Purple nodes are unvisited, green nodes were visited, and gold is active</p>
-              </>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      {/* Educational Notes */}
-      <Card className="p-6 mt-6 bg-card border border-border/70">
-        <h3 className="text-lg font-semibold mb-3">💡 Learning Tips</h3>
-        <div className="grid md:grid-cols-2 gap-4 text-sm">
-          <div>
-            <h4 className="font-medium mb-2">Visual Learning</h4>
-            <p className="text-muted-foreground">
-              Watching algorithms in action helps build intuition for how they work and why certain approaches are more efficient.
+        {/* Integration Instructions */}
+        <div className="mt-6 p-4 bg-muted/40 rounded-lg border border-border/50">
+          <h4 className="font-semibold text-xs text-foreground uppercase tracking-wider mb-2">
+            Engineering & Developer Usage:
+          </h4>
+          <div className="text-xs text-muted-foreground space-y-1">
+            <p>
+              • <strong>Shareable Permalinks:</strong> Click "Share Link" on any visualizer to get a URL that re-creates the exact state, custom inputs, and algorithm for PR comments, docs, or bug reports.
             </p>
-          </div>
-          <div>
-            <h4 className="font-medium mb-2">Pattern Recognition</h4>
-            <p className="text-muted-foreground">
-              Look for patterns in how different algorithms approach the same problem - this insight is valuable for competitive programming.
+            <p>
+              • <strong>Step Trace Export:</strong> Click "Export Trace" to download immutable JSON step arrays for unit test reproduction, LLM reasoning, or documentation snapshots.
+            </p>
+            <p>
+              • <strong>Engine Reuse:</strong> All algorithms are pure functions decoupled from renderers. Import from <code className="text-foreground">algoxai</code> to use the logic directly in your own tools or CLIs.
             </p>
           </div>
         </div>
