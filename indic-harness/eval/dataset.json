@@ -1,0 +1,205 @@
+[
+  {
+    "id": "bug_01",
+    "category": "bug_fix",
+    "title": "Fix Off-by-One Loop Boundary",
+    "difficulty": "easy",
+    "prompt_en": "Fix the off-by-one error in the array search function inside src/search.ts so it checks the last element properly.",
+    "prompt_hi_en": "Bhai src/search.ts mein loop ka off-by-one error aa raha hai, last element check nahi ho raha. Isse theek kardo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/search.ts"
+  },
+  {
+    "id": "bug_02",
+    "category": "bug_fix",
+    "title": "Fix Null Pointer in User Profile",
+    "difficulty": "easy",
+    "prompt_en": "Add optional chaining or null checking in getUserCity function to prevent undefined crashes when address is missing.",
+    "prompt_hi_en": "getUserCity function crash ho raha hai jab user ka address null hota hai. Optional chaining lagake fix kar do.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/user.ts"
+  },
+  {
+    "id": "bug_03",
+    "category": "bug_fix",
+    "title": "Add Missing Await to Async Fetch",
+    "difficulty": "medium",
+    "prompt_en": "The loadConfig function returns an unresolved Promise instead of config data because await is missing before fetchSettings.",
+    "prompt_hi_en": "loadConfig mein await lagana bhool gaye the, isliye promise return ho raha hai data ki jagah. Await add kardo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/config.ts"
+  },
+  {
+    "id": "bug_04",
+    "category": "bug_fix",
+    "title": "Inverted Boolean in Auth Guard",
+    "difficulty": "medium",
+    "prompt_en": "In src/auth.ts, isTokenExpired check is inverted causing active sessions to be rejected and expired ones accepted. Fix the logic.",
+    "prompt_hi_en": "Auth guard mein token expiry ka logic ulta laga hua hai, valid users block ho rahe hain. Boolean condition reverse karo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/auth.ts"
+  },
+  {
+    "id": "bug_05",
+    "category": "bug_fix",
+    "title": "Prevent In-Place State Mutation",
+    "difficulty": "hard",
+    "prompt_en": "The sortItems function mutates the original items array directly. Update it to clone the array before sorting.",
+    "prompt_hi_en": "sortItems original array ko mutate kar raha hai jisse state corrupt ho rahi hai. Pehle clone karo fir sort karo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/state.ts"
+  },
+
+  {
+    "id": "ref_01",
+    "category": "refactor",
+    "title": "Extract Math Calculation Helper",
+    "difficulty": "easy",
+    "prompt_en": "Extract the repeated Euclidean distance formula into an exported pure function named calculateDistance.",
+    "prompt_hi_en": "Distance calculation ka code 3 jagah repeat ho raha hai. Isko ek alag calculateDistance function mein extract kardo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/geo.ts"
+  },
+  {
+    "id": "ref_02",
+    "category": "refactor",
+    "title": "Convert Callback to Async/Await",
+    "difficulty": "medium",
+    "prompt_en": "Refactor readFileWithCallback from callback pattern to modern async/await returning a Promise.",
+    "prompt_hi_en": "readFileWithCallback mein nested callbacks hain. Isko modern async/await syntax mein refactor karo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/io.ts"
+  },
+  {
+    "id": "ref_03",
+    "category": "refactor",
+    "title": "Optimize O(n^2) Lookup to O(n) Map",
+    "difficulty": "hard",
+    "prompt_en": "Optimize findDuplicates from O(n^2) nested loops to O(n) time complexity using a Set or Map.",
+    "prompt_hi_en": "findDuplicates function bohot slow chal raha hai nested loop ki wajah se. Set use karke O(n) mein optimize kardo.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/algorithms.ts"
+  },
+  {
+    "id": "ref_04",
+    "category": "refactor",
+    "title": "Extract Service Layer from Controller",
+    "difficulty": "medium",
+    "prompt_en": "Split UserController by moving database access logic into UserService so the controller only handles HTTP request/response.",
+    "prompt_hi_en": "Controller mein direct database queries likhi hui hain. Business logic UserService mein shift kardo.",
+    "expected_tools": ["read", "write", "edit"],
+    "target_file": "src/controllers.ts"
+  },
+  {
+    "id": "ref_05",
+    "category": "refactor",
+    "title": "Remove Dead Code & Unused Imports",
+    "difficulty": "easy",
+    "prompt_en": "Clean up src/legacy.ts by removing deprecated commented-out code blocks and unused utility imports.",
+    "prompt_hi_en": "src/legacy.ts mein purana commented code aur unused imports pade hain. Unko clean kardo bina functionality tode.",
+    "expected_tools": ["read", "edit"],
+    "target_file": "src/legacy.ts"
+  },
+
+  {
+    "id": "test_01",
+    "category": "test_writing",
+    "title": "Unit Tests for Negative & Zero Inputs",
+    "difficulty": "easy",
+    "prompt_en": "Add unit tests for the factorial function testing n = 0, n = 1, and negative numbers throwing an Error.",
+    "prompt_hi_en": "Factorial function ke liye n = 0, n = 1 aur negative numbers ke error cases ke unit tests likho.",
+    "expected_tools": ["read", "write", "bash"],
+    "target_file": "tests/math.test.ts"
+  },
+  {
+    "id": "test_02",
+    "category": "test_writing",
+    "title": "Boundary Tests for Empty Array",
+    "difficulty": "easy",
+    "prompt_en": "Write test cases checking that calculateAverage returns 0 when given an empty array.",
+    "prompt_hi_en": "calculateAverage function empty array pe NaN de raha hai ya nahi, iske liye test case likh ke verify karo.",
+    "expected_tools": ["read", "edit", "bash"],
+    "target_file": "tests/stats.test.ts"
+  },
+  {
+    "id": "test_03",
+    "category": "test_writing",
+    "title": "Test Error Throwing on Invalid Type",
+    "difficulty": "medium",
+    "prompt_en": "Write a Vitest test ensuring parseUser throws a ZodValidationError when required email field is missing.",
+    "prompt_hi_en": "Agar email field missing ho toh validation error throw hota hai ya nahi, iska unit test likho.",
+    "expected_tools": ["read", "edit", "bash"],
+    "target_file": "tests/validation.test.ts"
+  },
+  {
+    "id": "test_04",
+    "category": "test_writing",
+    "title": "Async Retry Handler Tests",
+    "difficulty": "hard",
+    "prompt_en": "Write an asynchronous test simulating 2 network failures followed by success to verify retryWithBackoff logic.",
+    "prompt_hi_en": "retryWithBackoff ka test banao jo 2 baar fail ho aur 3rd attempt mein pass ho jaye.",
+    "expected_tools": ["read", "write", "bash"],
+    "target_file": "tests/retry.test.ts"
+  },
+  {
+    "id": "test_05",
+    "category": "test_writing",
+    "title": "Tree Structure Snapshot Test",
+    "difficulty": "medium",
+    "prompt_en": "Write a test that constructs a BST from [50, 30, 70] and validates the root, left, and right node IDs.",
+    "prompt_hi_en": "[50, 30, 70] se BST bana ke root, left aur right child node IDs verify karne wala test likho.",
+    "expected_tools": ["read", "edit", "bash"],
+    "target_file": "tests/tree.test.ts"
+  },
+
+  {
+    "id": "qa_01",
+    "category": "repo_qa",
+    "title": "Explain Auth Guard Architecture",
+    "difficulty": "easy",
+    "prompt_en": "Read src/components/AuthGuard.tsx and explain how it prevents unauthorized access to protected routes.",
+    "prompt_hi_en": "src/components/AuthGuard.tsx dekh ke batao ki ye unauthorized users ko redirect kaise karta hai.",
+    "expected_tools": ["read"],
+    "target_file": "src/components/AuthGuard.tsx"
+  },
+  {
+    "id": "qa_02",
+    "category": "repo_qa",
+    "title": "Identify Sorting Time Complexity",
+    "difficulty": "easy",
+    "prompt_en": "Check src/lib/algorithms/sorting.ts and state the worst-case time complexity of bubbleSortSteps and insertionSortSteps.",
+    "prompt_hi_en": "src/lib/algorithms/sorting.ts padh ke batao bubble sort aur insertion sort ki worst-case time complexity kya hai.",
+    "expected_tools": ["read", "grep"],
+    "target_file": "src/lib/algorithms/sorting.ts"
+  },
+  {
+    "id": "qa_03",
+    "category": "repo_qa",
+    "title": "Locate Pathfinding Heuristic",
+    "difficulty": "medium",
+    "prompt_en": "Find where Manhattan distance is implemented in the pathfinding engine and explain why it is used for A* on a grid.",
+    "prompt_hi_en": "Pathfinding code mein Manhattan distance kaha calculate ho raha hai aur grid pe iska kya fayda hai?",
+    "expected_tools": ["grep", "read"],
+    "target_file": "src/lib/algorithms/pathfinding.ts"
+  },
+  {
+    "id": "qa_04",
+    "category": "repo_qa",
+    "title": "Summarize 3D Scene Controls",
+    "difficulty": "medium",
+    "prompt_en": "Inspect BST3DVisualizer.tsx and describe how OrbitControls and lighting are configured in the 3D scene.",
+    "prompt_hi_en": "BST3DVisualizer.tsx mein camera aur 3D lighting kaise set ki gayi hai, brief summary do.",
+    "expected_tools": ["read"],
+    "target_file": "src/components/visualizers/BST3DVisualizer.tsx"
+  },
+  {
+    "id": "qa_05",
+    "category": "repo_qa",
+    "title": "Analyze Edge Case in Hanoi Engine",
+    "difficulty": "hard",
+    "prompt_en": "Examine src/lib/algorithms/hanoi.ts and explain what happens when disk count is zero or negative.",
+    "prompt_hi_en": "Tower of Hanoi engine mein agar disks 0 ya negative ho toh algorithm kya return karega?",
+    "expected_tools": ["read"],
+    "target_file": "src/lib/algorithms/hanoi.ts"
+  }
+]
