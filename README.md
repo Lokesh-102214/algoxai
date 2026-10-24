@@ -12,7 +12,7 @@
 [![Three.js](https://img.shields.io/badge/Three.js-powered-000000?logo=three.js&logoColor=white)](https://threejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Indic LLMs](https://img.shields.io/badge/Indic%20AI-Sarvam%20AI%20Supported-orange.svg)](https://sarvam.ai)
-[![Vitest](https://img.shields.io/badge/Vitest-31%2B%20Passing-brightgreen?logo=vitest&logoColor=white)](https://vitest.dev/)
+[![Vitest](https://img.shields.io/badge/Vitest-49%20Passing-brightgreen?logo=vitest&logoColor=white)](https://vitest.dev/)
 
 [Live Demo](https://www.algoxai.tech/) · [Visualizer Lab](https://www.algoxai.tech/visualizations) · [Indic Harness Docs](indic-harness/README.md) · [Product Strategy](docs/strategy.md) · [Architecture](ARCHITECTURE.md) · [Contribute](CONTRIBUTING.md)
 

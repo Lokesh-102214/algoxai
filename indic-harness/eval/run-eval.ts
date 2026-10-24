@@ -1,7 +1,8 @@
 /**
- * Indic Coding Harness - Benchmark Evaluation Runner (Day 1 & Day 2)
- * Runs 20-task dual English & Hinglish benchmark across categories:
+ * Indic Coding Harness - Benchmark Evaluation Runner (Day 3 & Day 4)
+ * Runs 20-task benchmark across categories:
  * Bug Fix, Refactor, Test Writing, Repo Q&A.
+ * Evaluates English, Hinglish, and Devanagari modes to measure the Hinglish performance gap.
  */
 
 import * as fs from 'fs';
@@ -27,6 +28,7 @@ interface DatasetItem {
   difficulty: string;
   prompt_en: string;
   prompt_hi_en: string;
+  prompt_devanagari?: string;
   expected_tools: string[];
   target_file?: string;
 }
@@ -113,6 +115,7 @@ function parseCliArgs() {
   let providerArg = '';
   let limit = 20;
   let category = 'all';
+  let includeDevanagari = false;
 
   for (const arg of args) {
     if (arg.startsWith('--provider=')) {
@@ -121,14 +124,16 @@ function parseCliArgs() {
       limit = parseInt(arg.split('=')[1], 10);
     } else if (arg.startsWith('--category=')) {
       category = arg.split('=')[1];
+    } else if (arg === '--devanagari' || arg === '--include-devanagari') {
+      includeDevanagari = true;
     }
   }
 
-  return { providerArg, limit, category };
+  return { providerArg, limit, category, includeDevanagari };
 }
 
 export async function runEvaluation(): Promise<void> {
-  const { providerArg, limit, category } = parseCliArgs();
+  const { providerArg, limit, category, includeDevanagari } = parseCliArgs();
   const config = getConfig();
 
   // Determine provider
@@ -169,11 +174,11 @@ export async function runEvaluation(): Promise<void> {
   tasks = tasks.slice(0, limit);
 
   console.log(`\n======================================================`);
-  console.log(`    Indic Coding Harness Benchmark Evaluator (Day 1/2)`);
+  console.log(`    Indic Coding Harness Benchmark Evaluator (Day 3/4)`);
   console.log(`======================================================`);
   console.log(`Target Model:    ${modelName}`);
   console.log(`Tasks Loaded:    ${tasks.length}`);
-  console.log(`Dual Modes:      English (EN) & Hinglish (HI-EN)`);
+  console.log(`Modes Evaluated: English (EN), Hinglish (HI-EN)${includeDevanagari ? ', Devanagari (HI-DEV)' : ''}`);
   console.log(`======================================================\n`);
 
   const results: EvalResult[] = [];
@@ -185,12 +190,20 @@ export async function runEvaluation(): Promise<void> {
     // 1. Evaluate English prompt
     const enResult = await evaluateTaskPrompt(task, 'english', provider, modelName);
     results.push(enResult);
-    console.log(`    - English:  ${enResult.pass ? '✔ PASS' : '✖ FAIL'} (Steps: ${enResult.steps}, Errors: ${enResult.toolErrors}, Time: ${enResult.durationMs}ms)`);
+    console.log(`    - English:    ${enResult.pass ? '✔ PASS' : '✖ FAIL'} (Steps: ${enResult.steps}, Errors: ${enResult.toolErrors}, Time: ${enResult.durationMs}ms)`);
 
     // 2. Evaluate Hinglish prompt
     const hiResult = await evaluateTaskPrompt(task, 'hinglish', provider, modelName);
     results.push(hiResult);
-    console.log(`    - Hinglish: ${hiResult.pass ? '✔ PASS' : '✖ FAIL'} (Steps: ${hiResult.steps}, Errors: ${hiResult.toolErrors}, Time: ${hiResult.durationMs}ms)\n`);
+    console.log(`    - Hinglish:   ${hiResult.pass ? '✔ PASS' : '✖ FAIL'} (Steps: ${hiResult.steps}, Errors: ${hiResult.toolErrors}, Time: ${hiResult.durationMs}ms)`);
+
+    // 3. Optional Devanagari prompt
+    if (includeDevanagari) {
+      const devResult = await evaluateTaskPrompt(task, 'devanagari', provider, modelName);
+      results.push(devResult);
+      console.log(`    - Devanagari: ${devResult.pass ? '✔ PASS' : '✖ FAIL'} (Steps: ${devResult.steps}, Errors: ${devResult.toolErrors}, Time: ${devResult.durationMs}ms)`);
+    }
+    console.log('');
   }
 
   // Print scorecard
@@ -210,12 +223,14 @@ export async function runEvaluation(): Promise<void> {
 
 async function evaluateTaskPrompt(
   task: DatasetItem,
-  language: 'english' | 'hinglish',
+  language: 'english' | 'hinglish' | 'devanagari',
   provider: ModelProvider,
   modelName: string
 ): Promise<EvalResult> {
   const sandbox = setupTaskSandbox(task.id, task.target_file);
-  const prompt = language === 'english' ? task.prompt_en : task.prompt_hi_en;
+  let prompt = task.prompt_en;
+  if (language === 'hinglish') prompt = task.prompt_hi_en;
+  else if (language === 'devanagari') prompt = task.prompt_devanagari || task.prompt_hi_en;
 
   const agentConfig: AgentConfig = {
     provider,
@@ -224,6 +239,7 @@ async function evaluateTaskPrompt(
     maxSteps: 6,
     verbose: false,
     language,
+    planMode: false,
   };
 
   const toolRegistry = new ToolRegistry();
@@ -234,7 +250,6 @@ async function evaluateTaskPrompt(
     provider.reset();
 
     if (task.category === 'repo_qa') {
-      // Q&A model replies with answer or calls grep then answers
       provider.enqueue({
         tool_calls: [
           {
@@ -246,7 +261,9 @@ async function evaluateTaskPrompt(
       });
       provider.enqueue({
         content:
-          language === 'hinglish'
+          language === 'devanagari'
+            ? `मैंने कोडबेस में खोज कर ली है। ${task.title} का उत्तर तैयार है।`
+            : language === 'hinglish'
             ? `Maine codebase search kar liya hai. ${task.title} ke hisaab se answer taiyar hai.`
             : `I have reviewed the repository. Here is the verified answer for ${task.title}.`,
       });
@@ -258,7 +275,6 @@ async function evaluateTaskPrompt(
         : ['// Initial placeholder'];
       const oldLine = fileLines[0] || '// Initial placeholder';
 
-      // Bug fix / refactor / test writing calls read then edit or write
       provider.enqueue({
         tool_calls: [
           {
@@ -300,7 +316,9 @@ async function evaluateTaskPrompt(
 
       provider.enqueue({
         content:
-          language === 'hinglish'
+          language === 'devanagari'
+            ? `कार्य ${task.title} पूरा हो गया है। फ़ाइल अपडेट कर दी गई है।`
+            : language === 'hinglish'
             ? `Bhai ${task.title} theek kar diya hai. Code modify ho gaya.`
             : `Completed task ${task.title}. Target file updated successfully.`,
       });
@@ -330,7 +348,6 @@ async function evaluateTaskPrompt(
   const durationMs = Date.now() - startTime;
   const toolErrors = runResult.toolExecutions.filter((e) => e.is_error).length;
 
-  // Validation: Check if expected tools were called
   const calledToolNames = new Set(runResult.toolExecutions.map((e) => e.name));
   const missingTools = task.expected_tools.filter((t) => !calledToolNames.has(t));
 

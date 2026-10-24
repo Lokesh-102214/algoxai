@@ -1,36 +1,50 @@
 /**
- * Indic Coding Harness - Interactive REPL CLI (Day 2)
+ * Indic Coding Harness - Interactive REPL CLI (Day 3 & Day 4)
  * Claude Code style terminal experience optimized for Sarvam AI & Indic models.
+ * Includes Hinglish slash command aliases, Plan Mode gates, BHARAT.md loader, and Repo Map.
  */
 
 import * as readline from 'readline';
-import * as path from 'path';
 import { getConfig } from './config';
-import { AgentConfig, ModelProvider } from './types';
+import { AgentConfig, LanguageMode, ModelProvider } from './types';
 import { AgentLoop, AgentStepEvent } from './agent/loop';
 import { ToolRegistry } from './tools';
 import { SarvamProvider } from './providers/sarvam';
 import { OpenAICompatibleProvider } from './providers/openai-compatible';
 import { MockProvider } from './providers/mock';
+import { scaffoldBharatMd } from './context/project-file';
 
-function printBanner(model: string, workspace: string, language: string): void {
+function printBanner(
+  model: string,
+  workspace: string,
+  language: string,
+  planMode: boolean,
+  projectFile?: string,
+  hasRepoMap = false
+): void {
   console.log('\n===============================================================');
-  console.log('   🇮🇳  Indic Coding Harness (Claude Code Style) v0.1.0');
+  console.log('   🇮🇳  Indic Coding Harness (Claude Code Style) v0.2.0');
   console.log('       Clean-room harness for Sarvam AI & Indic LLMs');
   console.log('===============================================================');
-  console.log(`Active Model:    ${model}`);
-  console.log(`Workspace Root:  ${workspace}`);
-  console.log(`Language Mode:   ${language} (Conversational Hinglish + English Code)`);
-  console.log(`Tools Active:    read, write, edit, bash, grep, glob, todo`);
+  console.log(`Active Model:     ${model}`);
+  console.log(`Workspace Root:   ${workspace}`);
+  console.log(`Language Mode:    ${language} (Adaptive Hinglish / Devanagari / English)`);
+  console.log(`Plan Mode Gate:   ${planMode ? '🔒 ACTIVE (Read-only exploration)' : '🔓 OFF (Direct edits allowed)'}`);
+  console.log(`Project File:     ${projectFile ? `✔ Loaded (${projectFile})` : 'None found (Create with /bharat)'}`);
+  console.log(`Repo Symbol Map:  ${hasRepoMap ? '✔ Active' : 'Disabled'}`);
   console.log('---------------------------------------------------------------');
-  console.log('Commands:');
-  console.log('  /help or /madad   - Command list and documentation');
-  console.log('  /todo             - View session task checklist');
-  console.log('  /clear or /saaf   - Reset conversation context');
-  console.log('  /lang <mode>      - Set language (hinglish | english | hindi)');
-  console.log('  /model <name>     - Switch active model');
-  console.log('  /tools            - List registered tools and schemas');
-  console.log('  /exit or /bye     - Quit the harness');
+  console.log('Hinglish Slash Commands:');
+  console.log('  /yojana, /plan    - Toggle or inspect Plan Mode (Read-only exploration)');
+  console.log('  /karo, /approve   - Approve proposed plan & enable modifications');
+  console.log('  /soochi, /todo    - View session planning checklist');
+  console.log('  /madad, /help     - Command list and documentation');
+  console.log('  /saaf, /clear     - Reset conversation context');
+  console.log('  /bhasha, /lang    - Set language (hinglish | english | devanagari | auto)');
+  console.log('  /repomap, /naksha - View codebase symbol index');
+  console.log('  /bharat, /init    - Create BHARAT.md agent guidelines file');
+  console.log('  /dekho <file>     - Quick read file');
+  console.log('  /khoj <query>     - Quick grep codebase');
+  console.log('  /alvida, /exit    - Quit the harness');
   console.log('===============================================================\n');
 }
 
@@ -41,8 +55,8 @@ function truncateString(str: string, maxLen = 300): string {
 
 export async function startCli(): Promise<void> {
   const config = getConfig();
-  let workspaceRoot = process.cwd();
-  let language: 'hinglish' | 'english' | 'hindi' = 'hinglish';
+  const workspaceRoot = process.cwd();
+  let language: LanguageMode = 'auto';
 
   let provider: ModelProvider;
   let modelName = 'sarvam-30b';
@@ -75,18 +89,24 @@ export async function startCli(): Promise<void> {
     maxSteps: 10,
     verbose: false,
     language,
+    planMode: false,
+    enableCompaction: true,
   };
 
-  let loop = new AgentLoop(agentConfig, toolRegistry);
+  const loop = new AgentLoop(agentConfig, toolRegistry);
+  const projectFile = loop.getProjectInstructions().filename;
+  const hasRepoMap = Boolean(loop.getRepoMap());
 
-  printBanner(modelName, workspaceRoot, language);
+  printBanner(modelName, workspaceRoot, language, loop.isPlanMode(), projectFile, hasRepoMap);
 
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
-    prompt: '\nindic-code > ',
   });
 
+  const getPromptString = () => (loop.isPlanMode() ? '\nindic-code [PLAN] > ' : '\nindic-code > ');
+
+  rl.setPrompt(getPromptString());
   rl.prompt();
 
   rl.on('line', async (line: string) => {
@@ -105,16 +125,47 @@ export async function startCli(): Promise<void> {
       switch (command) {
         case '/help':
         case '/madad':
-          console.log('\n[Available Commands]');
-          console.log('  /help, /madad     - Command and usage guide');
-          console.log('  /todo             - View session todo list');
-          console.log('  /clear, /saaf     - Clear context and reset conversation');
-          console.log('  /lang <mode>      - Toggle language (hinglish | english | hindi)');
+          console.log('\n[Available Commands / Hinglish Aliases]');
+          console.log('  /yojana, /plan    - Toggle Plan Mode (Read-only exploration)');
+          console.log('  /karo, /approve   - Approve proposed plan and execute');
+          console.log('  /soochi, /todo    - View session todo checklist');
+          console.log('  /madad, /help     - Show this help guide');
+          console.log('  /saaf, /clear     - Reset conversation context');
+          console.log('  /bhasha, /lang    - Set language mode (hinglish | english | devanagari | auto)');
+          console.log('  /repomap, /naksha - View repository symbol map');
+          console.log('  /bharat, /init    - Create BHARAT.md guidelines');
+          console.log('  /dekho <file>     - Quick read file');
+          console.log('  /khoj <query>     - Quick grep codebase');
           console.log('  /model <name>     - Switch model name');
-          console.log('  /tools            - List all 7 tools and parameter types');
-          console.log('  /exit, /quit, /bye- Exit harness');
+          console.log('  /alvida, /exit    - Quit harness');
           break;
 
+        case '/yojana':
+        case '/plan': {
+          const current = loop.isPlanMode();
+          loop.setPlanMode(!current);
+          rl.setPrompt(getPromptString());
+          if (!current) {
+            console.log('\n🔒 [Plan Mode Activated]: Write/Edit/Bash are locked. The agent will explore and build a plan first.');
+          } else {
+            console.log('\n🔓 [Plan Mode Deactivated]: Direct modifications are now enabled.');
+          }
+          break;
+        }
+
+        case '/karo':
+        case '/approve': {
+          if (loop.isPlanMode()) {
+            loop.setPlanMode(false);
+            rl.setPrompt(getPromptString());
+            console.log('\n✔ [Plan Approved!]: Modification tools (write, edit, bash) unlocked. Agent can now apply changes.');
+          } else {
+            console.log('\nPlan Mode is not currently active. Edits are already enabled.');
+          }
+          break;
+        }
+
+        case '/soochi':
         case '/todo': {
           const todoTool = toolRegistry.get('todo');
           if (todoTool) {
@@ -130,16 +181,57 @@ export async function startCli(): Promise<void> {
           console.log('\n✔ Context reset done! Purani conversation history saaf ho gayi.');
           break;
 
+        case '/bhasha':
         case '/lang':
-          if (arg === 'hinglish' || arg === 'english' || arg === 'hindi') {
+          if (arg === 'hinglish' || arg === 'english' || arg === 'devanagari' || arg === 'auto') {
             language = arg;
-            agentConfig.language = arg;
-            loop.reset();
-            console.log(`\n✔ Language set to: ${language}`);
+            loop.setActiveLanguage(arg);
+            console.log(`\n✔ Language mode set to: ${language}`);
           } else {
-            console.log('\nUsage: /lang hinglish | english | hindi');
+            console.log('\nUsage: /lang hinglish | english | devanagari | auto');
           }
           break;
+
+        case '/repomap':
+        case '/naksha': {
+          const map = loop.getRepoMap();
+          console.log('\n[Repository Symbol Map]:\n' + (map || 'No symbol map available.'));
+          break;
+        }
+
+        case '/bharat':
+        case '/init': {
+          const createdPath = scaffoldBharatMd(workspaceRoot);
+          console.log(`\n✔ Created/verified guidelines at: ${createdPath}`);
+          loop.reset();
+          break;
+        }
+
+        case '/dekho': {
+          if (!arg) {
+            console.log('Usage: /dekho <file_path>');
+          } else {
+            const readTool = toolRegistry.get('read');
+            if (readTool) {
+              const res = await readTool.execute({ path: arg, line_count: 50 }, { workspaceRoot, toolCallId: 'cli_read' });
+              console.log(`\n${res.content}`);
+            }
+          }
+          break;
+        }
+
+        case '/khoj': {
+          if (!arg) {
+            console.log('Usage: /khoj <pattern>');
+          } else {
+            const grepTool = toolRegistry.get('grep');
+            if (grepTool) {
+              const res = await grepTool.execute({ pattern: arg }, { workspaceRoot, toolCallId: 'cli_grep' });
+              console.log(`\n${res.content}`);
+            }
+          }
+          break;
+        }
 
         case '/model':
           if (arg) {
@@ -163,12 +255,13 @@ export async function startCli(): Promise<void> {
         case '/exit':
         case '/quit':
         case '/bye':
+        case '/alvida':
           console.log('\nDhanyawaad! Alvida.');
           rl.close();
           return;
 
         default:
-          console.log(`\nUnknown command "${command}". Type /help for available options.`);
+          console.log(`\nUnknown command "${command}". Type /help or /madad for available options.`);
       }
 
       rl.prompt();
@@ -206,8 +299,11 @@ export async function startCli(): Promise<void> {
             console.log(`\n🔄 [Tool-Call Repair]: ${event.content}`);
             break;
 
+          case 'compaction':
+            console.log(`\n📦 [Context Compaction]: ${event.content}`);
+            break;
+
           case 'final_answer':
-            // Final response printed below
             break;
         }
       });

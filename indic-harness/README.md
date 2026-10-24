@@ -1,27 +1,40 @@
 # 🇮🇳 Indic Coding Harness (Claude Code Style)
 
-A clean-room, developer-first coding agent harness designed for **Sarvam AI** (`sarvam-30b`, `sarvam-105b`) and Indic LLMs. Implements public Claude Code behaviors (minimal toolset, exact-string fail-safe edits, tool repair auto-fix, session checklist, and bilingual Hinglish/English output).
+A clean-room, developer-first coding agent harness designed for **Sarvam AI** (`sarvam-30b`, `sarvam-105b`) and Indic LLMs. Implements public Claude Code behaviors (minimal toolset, exact-string fail-safe edits, tool repair auto-fix, session checklist, context compaction, repo map, Plan Mode gates, and bilingual Hinglish/English output).
 
 ---
 
-## 🌟 Architecture & Completed Milestones (Day 1 & Day 2)
+## 🌟 Architecture & Completed Milestones (Days 1 to 4)
 
 ```
                             ┌────────────────────────────────────────┐
-                            │        User Developer Prompt           │
-                            │   (Conversational Hinglish or English) │
+                            │    Developer Input (Hinglish / DEV)    │
+                            └───────────────────┬────────────────────┘
+                                                │
+                                                ▼
+                            ┌────────────────────────────────────────┐
+                            │    Language Detector & Transliterate   │
+                            │  (detector.ts & transliterate.ts)      │
                             └───────────────────┬────────────────────┘
                                                 │
                                                 ▼
                             ┌────────────────────────────────────────┐
                             │    Interactive CLI REPL (cli.ts)       │
-                            │    Slash commands: /madad, /todo, etc. │
+                            │  Hinglish Aliases: /yojana, /karo, etc.│
+                            └───────────────────┬────────────────────┘
+                                                │
+                                                ▼
+                            ┌────────────────────────────────────────┐
+                            │    Context Compactor & Repo Map        │
+                            │  - BHARAT.md Project Instructions      │
+                            │  - Compact Symbol Index (<repo_map>)   │
+                            │  - Tool Output & History Compaction    │
                             └───────────────────┬────────────────────┘
                                                 │
                                                 ▼
                             ┌────────────────────────────────────────┐
                             │       Autonomous Agent Loop            │
-                            │   Multi-turn loop + max step limits    │
+                            │  Plan Mode Gate & Multi-Turn Execution │
                             └───────┬────────────────────────▲───────┘
                                     │                        │
                       LLM Request   │                        │ Tool Results
@@ -83,31 +96,51 @@ OPENAI_API_KEY="your-openai-key"
 | `npm run harness` | Launch interactive terminal REPL CLI |
 | `npm run harness:probe` | Run live Sarvam API diagnostics (auth, schemas, streaming) |
 | `npm run harness:eval` | Run 20-task benchmark & generate comparison scorecard |
-| `npm run harness:test` | Run 100% verified Vitest test suite |
+| `npm run harness:test` | Run 100% verified Vitest test suite (49/49 tests passing) |
 
 ---
 
-## 💻 Interactive REPL CLI
+## 💻 Interactive REPL CLI & Hinglish Slash Commands
 
 Launch the CLI:
 ```bash
 npm run harness
 ```
 
-### Slash Commands:
-- `/help` or `/madad` : Display help, active tools, and command aliases.
-- `/todo` : View session todo checklist.
-- `/clear` or `/saaf` : Reset conversational context memory.
-- `/lang <hinglish|english|hindi>` : Switch agent explanation language.
-- `/model <name>` : Switch target model name on the fly.
-- `/tools` : Print schema specifications of all 7 active tools.
-- `/exit` or `/bye` : Close session.
+### Hinglish & English Slash Commands:
+- `/yojana` or `/plan` : Toggle Plan Mode (Read-only exploration before execution).
+- `/karo` or `/approve` : Approve planned changes and unlock modifying tools.
+- `/soochi` or `/todo` : View session planning checklist.
+- `/madad` or `/help` : Display help, active tools, and command aliases.
+- `/saaf` or `/clear` : Reset conversational context memory.
+- `/bhasha` or `/lang <mode>` : Set language mode (`hinglish` | `english` | `devanagari` | `auto`).
+- `/repomap` or `/naksha` : Display compact codebase symbol index.
+- `/bharat` or `/init` : Scaffold `BHARAT.md` project agent guidelines.
+- `/dekho <file>` : Quick inspect file contents.
+- `/khoj <pattern>` : Quick grep codebase for regex or string.
+- `/alvida` or `/exit` : Close session.
 
 ---
 
-## 🔬 Benchmark Evaluation (Day 1 & Day 2)
+## 🧠 Context Management & Memory (Day 4)
 
-The evaluation suite evaluates 20 real-world software tasks across 4 categories in dual **English** and **Hinglish**:
+1. **Context Compaction (`compaction.ts`):**
+   - Head/tail middle-truncation for oversized tool outputs (> 1500 characters).
+   - Turn compaction: summarizes earlier turns into `<prior_context_summary>` while preserving recent turns and system prompt intact.
+2. **Project Guidelines (`BHARAT.md` / `AGENTS.md` / `CLAUDE.md`):**
+   - Automatically loaded on startup from the workspace root and injected into the prompt.
+3. **Repo Map Symbol Index (`repo-map.ts`):**
+   - Scans project source files (`.ts`, `.tsx`, `.js`, `.py`) and builds a compact index of exported functions, classes, interfaces, and types.
+   - Prevents the agent from executing wasteful blind `grep` iterations.
+4. **Plan Mode Safety Gate (`plan-mode.ts`):**
+   - Restricts operations to read-only exploration (`read`, `grep`, `glob`, `todo`).
+   - Hard blocks `write`, `edit`, and `bash` until user runs `/approve` or `/karo`.
+
+---
+
+## 🔬 Benchmark Evaluation & Hinglish Gap Metric
+
+The evaluation suite evaluates 20 real-world software tasks across 4 categories in dual/triple language modes (**English**, **Hinglish**, and **Devanagari**):
 1. **Bug Fix (5 tasks):** Off-by-one errors, null pointers, missing awaits, inverted guards, in-place mutations.
 2. **Refactor (5 tasks):** Extract helpers, callback to async/await, O(n²) optimization, controller extraction, dead code removal.
 3. **Test Writing (5 tasks):** Negative inputs, empty arrays, error throws, async retry, snapshot tests.
@@ -117,6 +150,9 @@ The evaluation suite evaluates 20 real-world software tasks across 4 categories 
 ```bash
 # Run full benchmark
 npm run harness:eval
+
+# Run with Devanagari evaluation included
+npx tsx indic-harness/eval/run-eval.ts --include-devanagari
 
 # Run with task limit
 npx tsx indic-harness/eval/run-eval.ts --limit=5
@@ -129,31 +165,18 @@ Scorecards are saved automatically to `indic-harness/eval/SCORECARD.md` and `ind
 
 ---
 
-## 🛡️ Tool Safety & Fail-Safe Guarantees
-
-1. **Exact-String Edit Match (`edit`):**
-   - Replaces character-exact substrings.
-   - Prevents line-number drift.
-   - Throws clear fail-safe errors if the string is not found or matches multiple occurrences without explicit `replace_all: true`.
-2. **Bash Execution Guard (`bash`):**
-   - Hard blocks destructive command patterns (`rm -rf /`, `mkfs`, fork bombs `:(){ :|:& };:`, etc.).
-   - Truncates verbose stdout/stderr at 240 lines to protect context windows.
-3. **Workspace Boundary Confinement:**
-   - Tools resolve paths strictly within the workspace root, blocking `../../` directory escapes.
-
----
-
-## 🧪 Test Suite
+## 🧪 Verified Test Suite
 
 Run the Vitest suite:
 ```bash
 npm run harness:test
 ```
 
-Includes 31 tests covering:
-- Exact-string edit uniqueness and fail-safe safety.
-- Directory escape prevention and path security.
-- Command blocklist enforcement.
-- Heuristic JSON repair (code fences, trailing commas, single quotes, unquoted keys).
-- Tag fallback extraction (`<tool_call>` & `<function=name>`).
-- Multi-turn autonomous agent loops and step limits.
+**49 passed out of 49 tests (100% pass rate):**
+- `detector.test.ts`: Language detection (English, Hinglish, Devanagari, confidence scoring).
+- `transliterate.test.ts`: Devanagari ↔ Roman transliteration and colloquial normalization.
+- `context.test.ts`: BHARAT.md discovery, Repo Map symbol extraction, context compaction.
+- `plan-mode.test.ts`: Read-only enforcement, tool-blocking errors, plan approval unblocking.
+- `tools.test.ts`: Exact-string edits, directory confinement, command blocklist, todo tracking.
+- `repair.test.ts`: Markdown fence stripping, trailing commas, unquoted keys, single quotes, tag fallback.
+- `agent.test.ts`: Multi-turn reasoning loops, repair auto-fix, max step limits.

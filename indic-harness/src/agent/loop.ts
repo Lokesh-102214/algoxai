@@ -1,16 +1,23 @@
 /**
- * Autonomous Agent Loop Implementation
- * Orchestrates multi-turn tool execution, tool-call repair, self-correction, and Hinglish responses.
+ * Autonomous Agent Loop Implementation (Day 3 & Day 4)
+ * Orchestrates multi-turn tool execution, tool-call repair, self-correction,
+ * adaptive language detection (Hinglish / Devanagari / English),
+ * context compaction, project guidelines (BHARAT.md), repo map, and Plan Mode gates.
  */
 
-import { AgentConfig, Message, ToolCall, ToolResult } from '../types';
+import { AgentConfig, LanguageMode, Message, ToolCall, ToolResult } from '../types';
 import { ToolRegistry } from '../tools';
 import { buildSystemPrompt } from './prompt';
 import { repairToolCallArguments, extractTextBasedToolCalls } from './repair';
+import { detectLanguage } from '../indic/detector';
+import { loadProjectInstructions, ProjectFileResult } from '../context/project-file';
+import { buildRepoMap } from '../context/repo-map';
+import { compactHistory } from './compaction';
+import { PlanModeManager } from './plan-mode';
 
 export interface AgentStepEvent {
   step: number;
-  type: 'thought' | 'tool_call' | 'tool_result' | 'final_answer' | 'repair_retry';
+  type: 'thought' | 'tool_call' | 'tool_result' | 'final_answer' | 'repair_retry' | 'compaction';
   content: string;
   toolCall?: ToolCall;
   toolResult?: ToolResult;
@@ -22,6 +29,8 @@ export interface AgentRunResult {
   toolExecutions: ToolResult[];
   messages: Message[];
   success: boolean;
+  detectedLanguage?: string;
+  planModeBlocked?: boolean;
 }
 
 export class AgentLoop {
@@ -29,10 +38,25 @@ export class AgentLoop {
   private tools: ToolRegistry;
   private messages: Message[] = [];
   private toolExecutions: ToolResult[] = [];
+  private planModeManager: PlanModeManager;
+  private projectInstructions: ProjectFileResult;
+  private repoMapText = '';
+  private activeLanguage: LanguageMode;
 
   constructor(config: AgentConfig, tools?: ToolRegistry) {
     this.config = config;
     this.tools = tools || new ToolRegistry();
+    this.activeLanguage = config.language || 'hinglish';
+    this.planModeManager = new PlanModeManager(Boolean(config.planMode));
+    this.projectInstructions = loadProjectInstructions(config.workspaceRoot);
+
+    try {
+      const repoMapResult = buildRepoMap(config.workspaceRoot);
+      this.repoMapText = repoMapResult.formattedText;
+    } catch {
+      this.repoMapText = '';
+    }
+
     this.reset();
   }
 
@@ -40,7 +64,15 @@ export class AgentLoop {
     this.messages = [
       {
         role: 'system',
-        content: buildSystemPrompt(this.config.workspaceRoot, this.config.language),
+        content: buildSystemPrompt({
+          workspaceRoot: this.config.workspaceRoot,
+          language: this.activeLanguage,
+          projectInstructions: this.projectInstructions.found && this.projectInstructions.filename && this.projectInstructions.content
+            ? { filename: this.projectInstructions.filename, content: this.projectInstructions.content }
+            : undefined,
+          repoMap: this.repoMapText,
+          planMode: this.planModeManager.isPlanMode(),
+        }),
       },
     ];
     this.toolExecutions = [];
@@ -50,10 +82,56 @@ export class AgentLoop {
     return this.messages;
   }
 
+  public getActiveLanguage(): LanguageMode {
+    return this.activeLanguage;
+  }
+
+  public setActiveLanguage(lang: LanguageMode): void {
+    this.activeLanguage = lang;
+    this.reset();
+  }
+
+  public isPlanMode(): boolean {
+    return this.planModeManager.isPlanMode();
+  }
+
+  public setPlanMode(enabled: boolean): void {
+    this.planModeManager.setPlanMode(enabled);
+    this.reset();
+  }
+
+  public getRepoMap(): string {
+    return this.repoMapText;
+  }
+
+  public getProjectInstructions(): ProjectFileResult {
+    return this.projectInstructions;
+  }
+
   public async run(
     userPrompt: string,
     onStep?: (event: AgentStepEvent) => void
   ): Promise<AgentRunResult> {
+    // Adaptive language detection if auto or if prompt has Devanagari
+    if (this.config.language === 'auto' || /[\u0900-\u097F]/.test(userPrompt)) {
+      const detected = detectLanguage(userPrompt);
+      if (detected.detected !== this.activeLanguage) {
+        this.activeLanguage = detected.detected;
+        // Update system prompt with detected language
+        if (this.messages.length > 0 && this.messages[0].role === 'system') {
+          this.messages[0].content = buildSystemPrompt({
+            workspaceRoot: this.config.workspaceRoot,
+            language: this.activeLanguage,
+            projectInstructions: this.projectInstructions.found && this.projectInstructions.filename && this.projectInstructions.content
+              ? { filename: this.projectInstructions.filename, content: this.projectInstructions.content }
+              : undefined,
+            repoMap: this.repoMapText,
+            planMode: this.planModeManager.isPlanMode(),
+          });
+        }
+      }
+    }
+
     this.messages.push({
       role: 'user',
       content: userPrompt,
@@ -61,9 +139,25 @@ export class AgentLoop {
 
     let currentStep = 0;
     let finalResponse = '';
+    let planBlockedEncountered = false;
 
     while (currentStep < this.config.maxSteps) {
       currentStep++;
+
+      // Check for context compaction
+      if (this.config.enableCompaction !== false && this.messages.length > 8) {
+        const { messages: compactedMsgs, summary } = compactHistory(this.messages, {
+          maxEstimatedTokens: this.config.maxContextTokens || 10000,
+        });
+        if (summary.compactedTurns > 0) {
+          this.messages = compactedMsgs;
+          onStep?.({
+            step: currentStep,
+            type: 'compaction',
+            content: summary.summaryText,
+          });
+        }
+      }
 
       // 1. Invoke Model Provider
       const toolDefinitions = this.tools.getDefinitions();
@@ -117,7 +211,7 @@ export class AgentLoop {
 
         // Tool-Call Repair Layer
         const repair = repairToolCallArguments(call.rawArguments || call.arguments);
-        let args = repair.parsed;
+        const args = repair.parsed;
 
         let toolResult: ToolResult;
 
@@ -134,6 +228,10 @@ export class AgentLoop {
             content: `Error: Invalid JSON arguments: ${repair.error}. Output valid JSON arguments for tool "${call.name}".`,
             is_error: true,
           };
+        } else if (!this.planModeManager.isToolAllowed(call.name)) {
+          // Plan Mode Check: Block destructive actions
+          planBlockedEncountered = true;
+          toolResult = this.planModeManager.createBlockedResult(call.id, call.name);
         } else {
           const tool = this.tools.get(call.name);
           if (!tool) {
@@ -195,6 +293,8 @@ export class AgentLoop {
           toolExecutions: this.toolExecutions,
           messages: this.messages,
           success: false,
+          detectedLanguage: this.activeLanguage,
+          planModeBlocked: planBlockedEncountered,
         };
       }
     }
@@ -205,6 +305,8 @@ export class AgentLoop {
       toolExecutions: this.toolExecutions,
       messages: this.messages,
       success: true,
+      detectedLanguage: this.activeLanguage,
+      planModeBlocked: planBlockedEncountered,
     };
   }
 }

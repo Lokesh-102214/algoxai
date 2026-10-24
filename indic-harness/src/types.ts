@@ -76,15 +76,45 @@ export interface ModelProvider {
   chat(options: ProviderRequestOptions): Promise<ProviderResponse>;
 }
 
+export type LanguageMode = 'hinglish' | 'english' | 'hindi' | 'devanagari' | 'auto';
+
 export interface AgentConfig {
   provider: ModelProvider;
   model: string;
   workspaceRoot: string;
   maxSteps: number;
   verbose: boolean;
-  language: 'hinglish' | 'english' | 'hindi';
+  language: LanguageMode;
+  planMode?: boolean;
+  enableCompaction?: boolean;
+  maxContextTokens?: number;
   apiKey?: string;
   baseUrl?: string;
+}
+
+export interface LanguageDetectionResult {
+  detected: 'hinglish' | 'english' | 'devanagari';
+  confidence: number;
+  hasDevanagari: boolean;
+  hasIndicPhonetics: boolean;
+  sampleTokens: string[];
+}
+
+export interface RepoSymbol {
+  name: string;
+  kind: 'function' | 'class' | 'interface' | 'type' | 'variable' | 'export';
+  line: number;
+}
+
+export interface FileSymbolIndex {
+  path: string;
+  symbols: RepoSymbol[];
+}
+
+export interface CompactionSummary {
+  compactedTurns: number;
+  tokensSavedEstimate: number;
+  summaryText: string;
 }
 
 export type EvalCategory = 'bug_fix' | 'refactor' | 'test_writing' | 'repo_qa';
@@ -95,6 +125,7 @@ export interface EvalTask {
   category: EvalCategory;
   prompt_en: string;
   prompt_hi_en: string;
+  prompt_devanagari?: string;
   workspaceSetup?: Record<string, string>;
   expectedFiles?: string[];
   validate?: (workspace: string, toolResults: ToolResult[]) => Promise<{ pass: boolean; feedback: string }>;
@@ -104,7 +135,7 @@ export interface EvalResult {
   taskId: string;
   title: string;
   category: EvalCategory;
-  language: 'english' | 'hinglish';
+  language: 'english' | 'hinglish' | 'devanagari';
   pass: boolean;
   steps: number;
   toolErrors: number;

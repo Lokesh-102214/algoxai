@@ -8,7 +8,7 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 10
+    "durationMs": 16
   },
   {
     "taskId": "bug_01",
@@ -19,7 +19,18 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 7
+    "durationMs": 15
+  },
+  {
+    "taskId": "bug_01",
+    "title": "Fix Off-by-One Loop Boundary",
+    "category": "bug_fix",
+    "language": "devanagari",
+    "pass": true,
+    "steps": 3,
+    "toolErrors": 0,
+    "feedback": "Completed successfully",
+    "durationMs": 12
   },
   {
     "taskId": "bug_02",
@@ -41,7 +52,18 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 6
+    "durationMs": 11
+  },
+  {
+    "taskId": "bug_02",
+    "title": "Fix Null Pointer in User Profile",
+    "category": "bug_fix",
+    "language": "devanagari",
+    "pass": true,
+    "steps": 3,
+    "toolErrors": 0,
+    "feedback": "Completed successfully",
+    "durationMs": 11
   },
   {
     "taskId": "bug_03",
@@ -52,7 +74,7 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 5
+    "durationMs": 10
   },
   {
     "taskId": "bug_03",
@@ -63,7 +85,18 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 6
+    "durationMs": 9
+  },
+  {
+    "taskId": "bug_03",
+    "title": "Add Missing Await to Async Fetch",
+    "category": "bug_fix",
+    "language": "devanagari",
+    "pass": true,
+    "steps": 3,
+    "toolErrors": 0,
+    "feedback": "Completed successfully",
+    "durationMs": 11
   },
   {
     "taskId": "bug_04",
@@ -74,7 +107,7 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 4
+    "durationMs": 13
   },
   {
     "taskId": "bug_04",
@@ -85,358 +118,17 @@
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 7
-  },
-  {
-    "taskId": "bug_05",
-    "title": "Prevent In-Place State Mutation",
-    "category": "bug_fix",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
     "durationMs": 8
   },
   {
-    "taskId": "bug_05",
-    "title": "Prevent In-Place State Mutation",
+    "taskId": "bug_04",
+    "title": "Inverted Boolean in Auth Guard",
     "category": "bug_fix",
-    "language": "hinglish",
+    "language": "devanagari",
     "pass": true,
     "steps": 3,
     "toolErrors": 0,
     "feedback": "Completed successfully",
-    "durationMs": 4
-  },
-  {
-    "taskId": "ref_01",
-    "title": "Extract Math Calculation Helper",
-    "category": "refactor",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "ref_01",
-    "title": "Extract Math Calculation Helper",
-    "category": "refactor",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 4
-  },
-  {
-    "taskId": "ref_02",
-    "title": "Convert Callback to Async/Await",
-    "category": "refactor",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 5
-  },
-  {
-    "taskId": "ref_02",
-    "title": "Convert Callback to Async/Await",
-    "category": "refactor",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 6
-  },
-  {
-    "taskId": "ref_03",
-    "title": "Optimize O(n^2) Lookup to O(n) Map",
-    "category": "refactor",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "ref_03",
-    "title": "Optimize O(n^2) Lookup to O(n) Map",
-    "category": "refactor",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "ref_04",
-    "title": "Extract Service Layer from Controller",
-    "category": "refactor",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 6
-  },
-  {
-    "taskId": "ref_04",
-    "title": "Extract Service Layer from Controller",
-    "category": "refactor",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 6
-  },
-  {
-    "taskId": "ref_05",
-    "title": "Remove Dead Code & Unused Imports",
-    "category": "refactor",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "ref_05",
-    "title": "Remove Dead Code & Unused Imports",
-    "category": "refactor",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 4
-  },
-  {
-    "taskId": "test_01",
-    "title": "Unit Tests for Negative & Zero Inputs",
-    "category": "test_writing",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "test_01",
-    "title": "Unit Tests for Negative & Zero Inputs",
-    "category": "test_writing",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "test_02",
-    "title": "Boundary Tests for Empty Array",
-    "category": "test_writing",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 5
-  },
-  {
-    "taskId": "test_02",
-    "title": "Boundary Tests for Empty Array",
-    "category": "test_writing",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 5
-  },
-  {
-    "taskId": "test_03",
-    "title": "Test Error Throwing on Invalid Type",
-    "category": "test_writing",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 2
-  },
-  {
-    "taskId": "test_03",
-    "title": "Test Error Throwing on Invalid Type",
-    "category": "test_writing",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "test_04",
-    "title": "Async Retry Handler Tests",
-    "category": "test_writing",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 2
-  },
-  {
-    "taskId": "test_04",
-    "title": "Async Retry Handler Tests",
-    "category": "test_writing",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 3
-  },
-  {
-    "taskId": "test_05",
-    "title": "Tree Structure Snapshot Test",
-    "category": "test_writing",
-    "language": "english",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 4
-  },
-  {
-    "taskId": "test_05",
-    "title": "Tree Structure Snapshot Test",
-    "category": "test_writing",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 3,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 4
-  },
-  {
-    "taskId": "qa_01",
-    "title": "Explain Auth Guard Architecture",
-    "category": "repo_qa",
-    "language": "english",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 12
-  },
-  {
-    "taskId": "qa_01",
-    "title": "Explain Auth Guard Architecture",
-    "category": "repo_qa",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 7
-  },
-  {
-    "taskId": "qa_02",
-    "title": "Identify Sorting Time Complexity",
-    "category": "repo_qa",
-    "language": "english",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 7
-  },
-  {
-    "taskId": "qa_02",
-    "title": "Identify Sorting Time Complexity",
-    "category": "repo_qa",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 16
-  },
-  {
-    "taskId": "qa_03",
-    "title": "Locate Pathfinding Heuristic",
-    "category": "repo_qa",
-    "language": "english",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 12
-  },
-  {
-    "taskId": "qa_03",
-    "title": "Locate Pathfinding Heuristic",
-    "category": "repo_qa",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 7
-  },
-  {
-    "taskId": "qa_04",
-    "title": "Summarize 3D Scene Controls",
-    "category": "repo_qa",
-    "language": "english",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 5
-  },
-  {
-    "taskId": "qa_04",
-    "title": "Summarize 3D Scene Controls",
-    "category": "repo_qa",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 6
-  },
-  {
-    "taskId": "qa_05",
-    "title": "Analyze Edge Case in Hanoi Engine",
-    "category": "repo_qa",
-    "language": "english",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 8
-  },
-  {
-    "taskId": "qa_05",
-    "title": "Analyze Edge Case in Hanoi Engine",
-    "category": "repo_qa",
-    "language": "hinglish",
-    "pass": true,
-    "steps": 2,
-    "toolErrors": 0,
-    "feedback": "Completed successfully",
-    "durationMs": 6
+    "durationMs": 11
   }
 ]
