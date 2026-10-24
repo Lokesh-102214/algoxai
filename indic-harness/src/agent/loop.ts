@@ -2,7 +2,8 @@
  * Autonomous Agent Loop Implementation (Day 3 & Day 4)
  * Orchestrates multi-turn tool execution, tool-call repair, self-correction,
  * adaptive language detection (Hinglish / Devanagari / English),
- * context compaction, project guidelines (BHARAT.md), repo map, and Plan Mode gates.
+ * context compaction, project guidelines (BHARAT.md), repo map,
+ * Hinglish custom skills dispatch, and Plan Mode gates.
  */
 
 import { AgentConfig, LanguageMode, Message, ToolCall, ToolResult } from '../types';
@@ -14,13 +15,15 @@ import { loadProjectInstructions, ProjectFileResult } from '../context/project-f
 import { buildRepoMap } from '../context/repo-map';
 import { compactHistory } from './compaction';
 import { PlanModeManager } from './plan-mode';
+import { HinglishSkillRegistry, HinglishSkill } from '../skills';
 
 export interface AgentStepEvent {
   step: number;
-  type: 'thought' | 'tool_call' | 'tool_result' | 'final_answer' | 'repair_retry' | 'compaction';
+  type: 'thought' | 'tool_call' | 'tool_result' | 'final_answer' | 'repair_retry' | 'compaction' | 'skill_activation';
   content: string;
   toolCall?: ToolCall;
   toolResult?: ToolResult;
+  skill?: HinglishSkill;
 }
 
 export interface AgentRunResult {
@@ -31,6 +34,7 @@ export interface AgentRunResult {
   success: boolean;
   detectedLanguage?: string;
   planModeBlocked?: boolean;
+  matchedSkill?: HinglishSkill;
 }
 
 export class AgentLoop {
@@ -42,6 +46,7 @@ export class AgentLoop {
   private projectInstructions: ProjectFileResult;
   private repoMapText = '';
   private activeLanguage: LanguageMode;
+  private skillRegistry: HinglishSkillRegistry;
 
   constructor(config: AgentConfig, tools?: ToolRegistry) {
     this.config = config;
@@ -49,6 +54,7 @@ export class AgentLoop {
     this.activeLanguage = config.language || 'hinglish';
     this.planModeManager = new PlanModeManager(Boolean(config.planMode));
     this.projectInstructions = loadProjectInstructions(config.workspaceRoot);
+    this.skillRegistry = new HinglishSkillRegistry();
 
     try {
       const repoMapResult = buildRepoMap(config.workspaceRoot);
@@ -108,16 +114,30 @@ export class AgentLoop {
     return this.projectInstructions;
   }
 
+  public getSkillRegistry(): HinglishSkillRegistry {
+    return this.skillRegistry;
+  }
+
   public async run(
     userPrompt: string,
     onStep?: (event: AgentStepEvent) => void
   ): Promise<AgentRunResult> {
-    // Adaptive language detection if auto or if prompt has Devanagari
+    // 1. Check for custom Hinglish skill match
+    const matchedSkill = this.skillRegistry.matchSkill(userPrompt);
+    if (matchedSkill) {
+      onStep?.({
+        step: 0,
+        type: 'skill_activation',
+        content: `⚡ Activated Skill: ${matchedSkill.name} (${matchedSkill.hindiTitle})\nRunbook: ${matchedSkill.runbook.join(' -> ')}`,
+        skill: matchedSkill,
+      });
+    }
+
+    // 2. Adaptive language detection if auto or if prompt has Devanagari
     if (this.config.language === 'auto' || /[\u0900-\u097F]/.test(userPrompt)) {
       const detected = detectLanguage(userPrompt);
       if (detected.detected !== this.activeLanguage) {
         this.activeLanguage = detected.detected;
-        // Update system prompt with detected language
         if (this.messages.length > 0 && this.messages[0].role === 'system') {
           this.messages[0].content = buildSystemPrompt({
             workspaceRoot: this.config.workspaceRoot,
@@ -295,6 +315,7 @@ export class AgentLoop {
           success: false,
           detectedLanguage: this.activeLanguage,
           planModeBlocked: planBlockedEncountered,
+          matchedSkill: matchedSkill || undefined,
         };
       }
     }
@@ -307,6 +328,7 @@ export class AgentLoop {
       success: true,
       detectedLanguage: this.activeLanguage,
       planModeBlocked: planBlockedEncountered,
+      matchedSkill: matchedSkill || undefined,
     };
   }
 }

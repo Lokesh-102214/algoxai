@@ -96,7 +96,24 @@ OPENAI_API_KEY="your-openai-key"
 | `npm run harness` | Launch interactive terminal REPL CLI |
 | `npm run harness:probe` | Run live Sarvam API diagnostics (auth, schemas, streaming) |
 | `npm run harness:eval` | Run 20-task benchmark & generate comparison scorecard |
-| `npm run harness:test` | Run 100% verified Vitest test suite (49/49 tests passing) |
+| `npm run harness:test` | Run 100% verified Vitest test suite (59/59 tests passing) |
+
+---
+
+## 🇮🇳 Custom Hinglish Developer Skills
+
+The harness and workspace come pre-configured with 6 specialized skills tailored to popular Hinglish developer vocabulary. When the user speaks colloquially, the harness activates the corresponding structured runbook:
+
+| Skill ID | Hindi Title | Popular Hinglish Trigger Words | Runbook Focus |
+| :--- | :--- | :--- | :--- |
+| `theek-kardo` | ठीक कर दो | `theek kardo`, `fix karo`, `error aa raha hai`, `fat gaya`, `crash ho raha hai` | Diagnoses stack trace, root cause fix, fail-safe edit, test verification |
+| `samjhao` | समझाओ | `samjhao`, `flow batao`, `ye kya kar raha hai`, `architecture samjhao` | Step-by-step logic breakdown, complexity analysis, tech lead analogies |
+| `safai-refactor` | सफ़ाई और रिफैक्टर | `safai karo`, `clean karo`, `refactor kardo`, `dead code hatao`, `clean code banao` | DRY deduplication, dead code removal, helper extraction, guard clauses |
+| `jugaad-optimizer`| जुगाड़ ऑप्टिमाइज़र | `jugaad lagao`, `fast karo`, `optimize kardo`, `slow chal raha hai`, `speed badhao` | O(n²) to O(1) Map lookups, memoization, batching, algorithmic speedups |
+| `yojana-planner` | योजना प्लानर | `yojana banao`, `plan karo`, `pehle socho`, `steps batao`, `roadmap banao` | Read-only exploration, ordered `todo` checklist, risk assessment |
+| `chalao-jaanch` | चलाओ और जाँचो | `tests chalao`, `chalao aur dekho`, `jaanch karo`, `verify karo`, `check karo` | Test runner execution, failure diagnosis, auto-fixing until 100% green |
+
+*Use `/skills` or `/hunnar` inside the CLI to inspect all active skills.*
 
 ---
 
@@ -172,7 +189,8 @@ Run the Vitest suite:
 npm run harness:test
 ```
 
-**49 passed out of 49 tests (100% pass rate):**
+**59 passed out of 59 tests (100% pass rate):**
+- `skills.test.ts`: Keyword matching and skill activation for 6 Hinglish developer skills.
 - `detector.test.ts`: Language detection (English, Hinglish, Devanagari, confidence scoring).
 - `transliterate.test.ts`: Devanagari ↔ Roman transliteration and colloquial normalization.
 - `context.test.ts`: BHARAT.md discovery, Repo Map symbol extraction, context compaction.

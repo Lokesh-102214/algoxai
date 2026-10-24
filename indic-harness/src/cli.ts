@@ -1,7 +1,8 @@
 /**
- * Indic Coding Harness - Interactive REPL CLI (Day 3 & Day 4)
+ * Indic Coding Harness - Interactive REPL CLI (Days 1 to 4)
  * Claude Code style terminal experience optimized for Sarvam AI & Indic models.
- * Includes Hinglish slash command aliases, Plan Mode gates, BHARAT.md loader, and Repo Map.
+ * Includes Hinglish slash command aliases, Plan Mode gates, BHARAT.md loader,
+ * Repo Map symbol indexer, and Hinglish custom developer skills.
  */
 
 import * as readline from 'readline';
@@ -13,6 +14,7 @@ import { SarvamProvider } from './providers/sarvam';
 import { OpenAICompatibleProvider } from './providers/openai-compatible';
 import { MockProvider } from './providers/mock';
 import { scaffoldBharatMd } from './context/project-file';
+import { BUILTIN_HINGLISH_SKILLS } from './skills';
 
 function printBanner(
   model: string,
@@ -23,7 +25,7 @@ function printBanner(
   hasRepoMap = false
 ): void {
   console.log('\n===============================================================');
-  console.log('   🇮🇳  Indic Coding Harness (Claude Code Style) v0.2.0');
+  console.log('   🇮🇳  Indic Coding Harness (Claude Code Style) v0.3.0');
   console.log('       Clean-room harness for Sarvam AI & Indic LLMs');
   console.log('===============================================================');
   console.log(`Active Model:     ${model}`);
@@ -32,11 +34,13 @@ function printBanner(
   console.log(`Plan Mode Gate:   ${planMode ? '🔒 ACTIVE (Read-only exploration)' : '🔓 OFF (Direct edits allowed)'}`);
   console.log(`Project File:     ${projectFile ? `✔ Loaded (${projectFile})` : 'None found (Create with /bharat)'}`);
   console.log(`Repo Symbol Map:  ${hasRepoMap ? '✔ Active' : 'Disabled'}`);
+  console.log(`Hinglish Skills:  ✔ 6 Active (theek-kardo, samjhao, safai, jugaad, etc.)`);
   console.log('---------------------------------------------------------------');
   console.log('Hinglish Slash Commands:');
   console.log('  /yojana, /plan    - Toggle or inspect Plan Mode (Read-only exploration)');
   console.log('  /karo, /approve   - Approve proposed plan & enable modifications');
   console.log('  /soochi, /todo    - View session planning checklist');
+  console.log('  /skills, /hunnar  - View active Hinglish custom developer skills');
   console.log('  /madad, /help     - Command list and documentation');
   console.log('  /saaf, /clear     - Reset conversation context');
   console.log('  /bhasha, /lang    - Set language (hinglish | english | devanagari | auto)');
@@ -129,6 +133,7 @@ export async function startCli(): Promise<void> {
           console.log('  /yojana, /plan    - Toggle Plan Mode (Read-only exploration)');
           console.log('  /karo, /approve   - Approve proposed plan and execute');
           console.log('  /soochi, /todo    - View session todo checklist');
+          console.log('  /skills, /hunnar  - View active Hinglish custom developer skills');
           console.log('  /madad, /help     - Show this help guide');
           console.log('  /saaf, /clear     - Reset conversation context');
           console.log('  /bhasha, /lang    - Set language mode (hinglish | english | devanagari | auto)');
@@ -139,6 +144,21 @@ export async function startCli(): Promise<void> {
           console.log('  /model <name>     - Switch model name');
           console.log('  /alvida, /exit    - Quit harness');
           break;
+
+        case '/skills':
+        case '/hunnar': {
+          console.log('\n===============================================================');
+          console.log('        POPULAR HINGLISH DEVELOPER SKILLS & HUNNAR');
+          console.log('===============================================================');
+          for (const s of BUILTIN_HINGLISH_SKILLS) {
+            console.log(`\n📌 ${s.name} (${s.hindiTitle}) [${s.category}]`);
+            console.log(`   ${s.description}`);
+            console.log(`   Trigger Keywords: ${s.triggerKeywords.slice(0, 7).join(', ')}...`);
+            console.log(`   Example: "${s.examplePhrases[0]}"`);
+          }
+          console.log('\n===============================================================\n');
+          break;
+        }
 
         case '/yojana':
         case '/plan': {
@@ -275,6 +295,10 @@ export async function startCli(): Promise<void> {
     try {
       const result = await loop.run(input, (event: AgentStepEvent) => {
         switch (event.type) {
+          case 'skill_activation':
+            console.log(`\n⚡ [Skill Activated]: ${event.skill?.name} (${event.skill?.hindiTitle})`);
+            break;
+
           case 'thought':
             if (event.content.trim()) {
               console.log(`\n💭 [Agent Thought]:\n${truncateString(event.content, 400)}`);
